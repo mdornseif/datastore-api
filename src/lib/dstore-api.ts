@@ -10,7 +10,7 @@
  */
 
 import { AsyncLocalStorage } from 'async_hooks';
-import {Writable} from 'ts-essentials';
+import { Writable } from 'ts-essentials';
 import {
   Datastore,
   Key,
@@ -175,6 +175,8 @@ Main differences:
 This documentation also tries to document the little known idiosyncrasies of the [@google-cloud/datastore](https://github.com/googleapis/nodejs-datastore) library. See the corresponding functions.
 */
 export class Dstore implements IDstore {
+  private readonly urlSaveKey = new entity.URLSafeKey();
+
   /** Generate a Dstore instance for a specific [[Datastore]] instance.
 
   ```
@@ -190,9 +192,6 @@ export class Dstore implements IDstore {
   @param projectId The `GCLOUD_PROJECT ID`. Used for Key generation during serialization.
   ```
   */
-
-  private readonly urlSaveKey = new entity.URLSafeKey();
-
   constructor(
     readonly datastore: Datastore,
     readonly projectId?: string,
@@ -301,7 +300,7 @@ export class Dstore implements IDstore {
   async get(key: Key): Promise<DstoreEntry | null> {
     assertIsObject(key);
     assert(!Array.isArray(key));
-    const getresult = await this.getMulti([key])
+    const getresult = await this.getMulti([key]);
     return getresult?.[0] || null;
   }
 
@@ -327,7 +326,9 @@ export class Dstore implements IDstore {
     // assertIsArray(keys);
     try {
       return this.fixKeys(
-        keys.length > 0 ? (await this.getDoT().get(keys as Writable<typeof keys>))?.[0] : []
+        keys.length > 0
+          ? (await this.getDoT().get(keys as Writable<typeof keys>))?.[0]
+          : []
       );
     } catch (error) {
       // console.error(error)
