@@ -2,7 +2,7 @@
 
 Simplified, more consistent API for Google Cloud Datastore.
 
-/\*\* Dstore implements a slightly more accessible version of the [Google Cloud Datastore: Node.js Client](https://cloud.google.com/nodejs/docs/reference/datastore/latest)
+Dstore implements a slightly more accessible version of the [Google Cloud Datastore: Node.js Client](https://cloud.google.com/nodejs/docs/reference/datastore/latest)
 
 [@google-cloud/datastore](https://github.com/googleapis/nodejs-datastore#readme) is a strange beast: [The documentation is auto generated](https://cloud.google.com/nodejs/docs/reference/datastore/latest) missing some core methods and completely shy of documenting any advanced concepts.
 
@@ -23,6 +23,14 @@ Main differences:
 Find the full documentation [here](http://mdornseif.io/datastore-api/classes/Dstore.html). In there also some of the idionsyncaties of using the Datastore are explained.
 
 # See also
+
+- Google Doumentation
+
+  - [Official Google Node Datastore SDK Documentation](https://cloud.google.com/nodejs/docs/reference/datastore/latest)
+  - [Hidden Auto-Generated Datastore API Documentation](https://cloud.google.com/nodejs/docs/reference/datastore/latest/datastore/datastore)
+  - Other [Hidden Auto-Generated Datastore API Documentation](https://googleapis.dev/nodejs/datastore/latest/) with better navigation. Seems to contain more on the lower level access.
+  - [SDK Source](https://github.com/googleapis/nodejs-datastore)
+  - [API reference](https://cloud.google.com/datastore/docs/reference/data/rpc) helps to understand under-documented SDK.
 
 - API Simplification
   - [google-cloud-datastore-node](https://www.npmjs.com/package/google-cloud-datastore-node)

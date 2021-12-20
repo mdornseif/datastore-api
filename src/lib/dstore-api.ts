@@ -1,16 +1,16 @@
 /*
- * myKvStore.ts - Datastore Compatibility layer
- * Hier bilden wir auf sinnvolle Weise Transaktionen und dergleichen ab.
- * Pro Datastore Projekt gibt es ein KvStore.
+ * dstore.ts - Datastore Compatibility layer
+ * Try to get a smoother api for transactions and such.
+ * A little bit inspired by the Python2 ndb interface.
  *
- * In Zukunft sollte https://github.com/graphql/dataloader für batching sorgen.
+ * In future https://github.com/graphql/dataloader might be used for batching.
  *
  * Created by Dr. Maximillian Dornseif 2021-12-05 in huwawi3backend 11.10.0
  * Copyright (c) Dr. Maximillian Dornseif
  */
 
 import { AsyncLocalStorage } from 'async_hooks';
-import { Writable } from 'ts-essentials';
+
 import {
   Datastore,
   Key,
@@ -32,6 +32,8 @@ import {
   assertIsObject,
   assertIsString,
 } from 'assertate';
+import { Writable } from 'ts-essentials';
+
 // import Debug from 'debug';
 
 /** @ignore */
@@ -57,26 +59,6 @@ export type IGqlFilterSpec = {
 export type TGqlFilterList = ReadonlyArray<
   readonly [string, Operator, DstorePropertyValues]
 >;
-
-export function getDstore(datastorename: string): Dstore {
-  const dsOptions = {
-    huwawi3Datastore: { projectId: 'huwawi3', namespace: 'production' },
-    huwawi2Datastore: { projectId: 'huwawi2' },
-    edihubDatastore: { projectId: 'edihub-eu' },
-    hulogiDatastore: { projectId: 'hulogi-eu' },
-    huFobDatastore: { projectId: 'hufob-eu' },
-  };
-
-  const options: Record<string, string> = {};
-  if (process.env.JEST_WORKER_ID) {
-    options.namespace = process.env.NODE_ENV ?? 'test';
-  }
-
-  return new Dstore(
-    new Datastore({ ...dsOptions[datastorename], ...options }),
-    dsOptions[datastorename].projectId
-  );
-}
 
 /** Define what can be written into the Datastore */
 export type DstorePropertyValues =
@@ -623,7 +605,7 @@ export class DstoreError extends Error {
 
     // if no name provided, use the default. defineProperty ensures that it stays non-enumerable
     if (!this.name) {
-      Object.defineProperty(this, 'name', { value: 'KvStoreError' });
+      Object.defineProperty(this, 'name', { value: 'DstoreError' });
     }
     // code: 3,
     // details: 'The key path element name is the empty string.',
