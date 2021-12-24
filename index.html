@@ -2,27 +2,55 @@
 <a href="#datastore-api" id="datastore-api" style="color: inherit; text-decoration: none;">
   <h1>datastore-api</h1>
 </a>
-<p>Simplified, more consistent API for Google Cloud Datastore</p>
+<p>Simplified, more consistent API for Google Cloud Datastore.</p>
+<p>Dstore implements a slightly more accessible version of the <a href="https://cloud.google.com/nodejs/docs/reference/datastore/latest">Google Cloud Datastore: Node.js Client</a></p>
+<p><a href="https://github.com/googleapis/nodejs-datastore#readme">@google-cloud/datastore</a> is a strange beast: <a href="https://cloud.google.com/nodejs/docs/reference/datastore/latest">The documentation is auto generated</a> missing some core methods and completely shy of documenting any advanced concepts.</p>
+<p>Also the typings are strange and overly broad.</p>
+<p>Dstore tries to abstract away most surprises the datastore provides to you but als tries to stay as API compatible as possible to <a href="https://github.com/googleapis/nodejs-datastore">@google-cloud/datastore</a>.</p>
+<p>Main differences:</p>
+<ul>
+<li>Everything asynchronous is Promise-based - no callbacks.</li>
+<li><a href="http://mdornseif.io/datastore-api/classes/Dstore.html#get">get</a> always returns a single <code>DstoreEntry</code>.</li>
+<li><a href="http://mdornseif.io/datastore-api/classes/Dstore.html#getMulti">getMulti</a> always returns an Array.</li>
+<li><a href="http://mdornseif.io/datastore-api/classes/Dstore.html#set">set</a> is called with <code>(key, value)</code> and always returns the complete <code>Key</code> of the entity being written.</li>
+<li><a href="http://mdornseif.io/datastore-api/classes/Dstore.html#allocateOneId">allocateOneId</a> returns a single numeric string encoded unique datastore id without the need of fancy unpacking.</li>
+<li><a href="http://mdornseif.io/datastore-api/classes/Dstore.html#runInTransaction">runInTransaction</a> allows you to provide a function to be executed inside an transaction without the need of passing around the transaction object. This is modelled after Python 2.7 <a href="https://cloud.google.com/appengine/docs/standard/python/ndb/transactions">ndb&#39;s <code>@ndb.transactional</code> feature</a>. This is implemented via node&#39;s <a href="https://nodejs.org/docs/latest-v14.x/api/async_hooks.html">AsyncLocalStorage</a>.</li>
+<li><a href="http://mdornseif.io/datastore-api/classes/Dstore.html#keySerialize">keySerialize</a> is synchronous. 🦄</li>
+</ul>
+<p>Find the full documentation <a href="http://mdornseif.io/datastore-api/classes/Dstore.html">here</a>. In there also some of the idiosyncrasies of using the Datastore are explained.</p>
+<p>See <a href="http://mdornseif.io/datastore-api/classes/Dstore.html">the API documentation</a> for Details.</p>
 
 <a href="#see-also" id="see-also" style="color: inherit; text-decoration: none;">
   <h1>See also</h1>
 </a>
 <ul>
-<li>API Simplification<ul>
+<li><p>Google Documentation</p>
+<ul>
+<li><a href="https://cloud.google.com/nodejs/docs/reference/datastore/latest">Official Google Node Datastore SDK Documentation</a></li>
+<li><a href="https://cloud.google.com/nodejs/docs/reference/datastore/latest/datastore/datastore">Hidden Auto-Generated Datastore API Documentation</a></li>
+<li>Other <a href="https://googleapis.dev/nodejs/datastore/latest/">Hidden Auto-Generated Datastore API Documentation</a> with better navigation. Seems to contain more on the lower level access.</li>
+<li><a href="https://github.com/googleapis/nodejs-datastore">SDK Source</a></li>
+<li><a href="https://cloud.google.com/datastore/docs/reference/data/rpc">API reference</a> helps to understand under-documented SDK.</li>
+</ul>
+</li>
+<li><p>API Simplification</p>
+<ul>
 <li><a href="https://www.npmjs.com/package/google-cloud-datastore-node">google-cloud-datastore-node</a></li>
 <li><a href="https://github.com/aminekun90/google_entity">google_entity</a></li>
 <li><a href="https://github.com/Thomas-T/nodebjectify">nodebjectify</a></li>
 </ul>
 </li>
-<li>ORM / Schema<ul>
+<li><p>ORM / Schema</p>
+<ul>
 <li><a href="https://www.npmjs.com/package/pebblebed">pebblebed</a></li>
 <li><a href="https://github.com/sebelga/gstore-node">gstore-node</a></li>
 </ul>
 </li>
-<li>Others<ul>
+<li><p>Others</p>
+<ul>
 <li><a href="https://www.npmjs.com/package/google-cloud-kvstore">google-cloud-kvstore</a></li>
 <li><a href="https://github.com/aubrian-halili/datastore-entity#readme">datastore-entity</a></li>
 </ul>
 </li>
 </ul>
-</div></div><div class="col-4 col-menu menu-sticky-wrap menu-highlight"><nav class="tsd-navigation primary"><ul><li class="current"><a href="modules.html">Exports</a></li></ul></nav><nav class="tsd-navigation secondary menu-sticky"><ul><li class="tsd-kind-class"><a href="classes/Dstore.html" class="tsd-kind-icon">Dstore</a></li><li class="tsd-kind-class"><a href="classes/DstoreError.html" class="tsd-kind-icon">Dstore<wbr/>Error</a></li><li class="tsd-kind-type-alias"><a href="modules.html#DstoreEntry" class="tsd-kind-icon">Dstore<wbr/>Entry</a></li><li class="tsd-kind-type-alias"><a href="modules.html#DstorePropertyValues" class="tsd-kind-icon">Dstore<wbr/>Property<wbr/>Values</a></li><li class="tsd-kind-type-alias"><a href="modules.html#DstoreSaveEntity" class="tsd-kind-icon">Dstore<wbr/>Save<wbr/>Entity</a></li><li class="tsd-kind-type-alias"><a href="modules.html#IGqlFilterSpec" class="tsd-kind-icon">IGql<wbr/>Filter<wbr/>Spec</a></li><li class="tsd-kind-type-alias"><a href="modules.html#IGqlFilterTypes" class="tsd-kind-icon">IGql<wbr/>Filter<wbr/>Types</a></li><li class="tsd-kind-type-alias"><a href="modules.html#TGqlFilterList" class="tsd-kind-icon">TGql<wbr/>Filter<wbr/>List</a></li><li class="tsd-kind-function"><a href="modules.html#getDstore" class="tsd-kind-icon">get<wbr/>Dstore</a></li></ul></nav></div></div></div><footer class="with-border-bottom"><div class="container"><h2>Legend</h2><div class="tsd-legend-group"><ul class="tsd-legend"><li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li><li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li><li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li><li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li></ul></div><h2>Settings</h2><p>Theme <select id="theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></p></div></footer><div class="container tsd-generator"><p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div><div class="overlay"></div><script src="assets/main.js"></script></body></html>
+</div></div><div class="col-4 col-menu menu-sticky-wrap menu-highlight"><nav class="tsd-navigation primary"><ul><li class="current"><a href="modules.html">Exports</a></li></ul></nav><nav class="tsd-navigation secondary menu-sticky"><ul><li class="tsd-kind-class"><a href="classes/Dstore.html" class="tsd-kind-icon">Dstore</a></li><li class="tsd-kind-class"><a href="classes/DstoreError.html" class="tsd-kind-icon">Dstore<wbr/>Error</a></li><li class="tsd-kind-type-alias"><a href="modules.html#DstoreEntry" class="tsd-kind-icon">Dstore<wbr/>Entry</a></li><li class="tsd-kind-type-alias"><a href="modules.html#DstorePropertyValues" class="tsd-kind-icon">Dstore<wbr/>Property<wbr/>Values</a></li><li class="tsd-kind-type-alias"><a href="modules.html#DstoreSaveEntity" class="tsd-kind-icon">Dstore<wbr/>Save<wbr/>Entity</a></li><li class="tsd-kind-type-alias"><a href="modules.html#IGqlFilterSpec" class="tsd-kind-icon">IGql<wbr/>Filter<wbr/>Spec</a></li><li class="tsd-kind-type-alias"><a href="modules.html#IGqlFilterTypes" class="tsd-kind-icon">IGql<wbr/>Filter<wbr/>Types</a></li><li class="tsd-kind-type-alias"><a href="modules.html#TGqlFilterList" class="tsd-kind-icon">TGql<wbr/>Filter<wbr/>List</a></li></ul></nav></div></div></div><footer class="with-border-bottom"><div class="container"><h2>Legend</h2><div class="tsd-legend-group"><ul class="tsd-legend"><li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li><li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li><li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li><li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li></ul></div><h2>Settings</h2><p>Theme <select id="theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></p></div></footer><div class="container tsd-generator"><p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div><div class="overlay"></div><script src="assets/main.js"></script></body></html>
