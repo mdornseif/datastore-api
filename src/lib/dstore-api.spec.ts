@@ -5,23 +5,27 @@
  * Copyright (c) 2021 HUDORA GmbH
  */
 
-// import { Datastore, Key } from '@google-cloud/datastore';
+import { Datastore } from '@google-cloud/datastore';
 // import { assertIsObject, isNumber } from 'assertate';
 import test from 'ava';
 
-import { getDstore } from './dstore-api';
+import { Dstore } from './dstore-api';
+
+function getDstore(projectId) {
+  return new Dstore(new Datastore({ projectId }));
+}
 
 test('keySerialize', async (t) => {
   const kvStore = getDstore('huwawi3Datastore');
   t.deepEqual(kvStore.key(['testYodel', 123]), {
     id: 123 as any, // typing in inconclusive here
     kind: 'testYodel',
-    namespace: 'test',
+    namespace: undefined,
     path: ['testYodel', 123],
   } as any);
   t.deepEqual(kvStore.key(['testYodel', 123]).path, ['testYodel', 123]);
   t.deepEqual(kvStore.key(['testYodel', 123]).serialized, {
-    namespace: 'test',
+    namespace: 'undefined',
     path: [
       'testYodel',
       {
@@ -36,10 +40,10 @@ test('keySerialize', async (t) => {
   t.deepEqual(kvStore.keyFromSerialized(ser), {
     id: '123',
     kind: 'testYodel',
-    namespace: 'test',
+    namespace: 'undefined',
     path: ['testYodel', '123'],
   } as any);
-} );
+});
 
 //   it("allocation", async () => {
 //     expect.assertions(1);

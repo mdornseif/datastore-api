@@ -520,6 +520,17 @@ export class Dstore implements IDstore {
     }
   }
 
+  /** Allocate one ID in the Datastore.
+   *
+   * Currently (late 2021) there is no documentation provided by Google for the underlying node function.
+   * Check the Documentation for [the low-level function](https://cloud.google.com/datastore/docs/reference/data/rest/v1/projects/allocateIds)
+   * and [the conceptual overview](https://cloud.google.com/datastore/docs/concepts/entities#assigning_your_own_numeric_id)
+   * and [this Stackoverflow post](https://stackoverflow.com/questions/60516959/how-does-allocateids-work-in-cloud-datastore-mode).
+   *
+   * The ID is a string encoded large number. This function will never return the same ID twice for any given Datastore.
+   * If you provide a kindName the ID will be namespaced to this kind.
+   * In fact the generated ID is namespaced via an incomplete [[Key]] of the given Kind.
+   */
   async allocateOneId(kindName = 'Numbering'): Promise<string> {
     assertIsString(kindName);
     const ret = (
