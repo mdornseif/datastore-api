@@ -56,9 +56,7 @@ export type IGqlFilterTypes = boolean | string | number;
 export type IGqlFilterSpec = {
   readonly eq: IGqlFilterTypes;
 };
-export type TGqlFilterList = ReadonlyArray<
-  readonly [string, Operator, DstorePropertyValues]
->;
+export type TGqlFilterList = Array<[string, Operator, DstorePropertyValues]>;
 
 /** Define what can be written into the Datastore */
 export type DstorePropertyValues =
@@ -73,18 +71,23 @@ export type DstorePropertyValues =
   | readonly DstorePropertyValues[]
   | { readonly [key: string]: DstorePropertyValues };
 
+export interface DstoreEntryWithoutKey {
+  /** All User Data stored in the Datastore */
+  readonly [key: string]: DstorePropertyValues;
+}
+
 /** Represents what is actually stored inside the Datastore, called "Entity" by Google
     [@google-cloud/datastore](https://github.com/googleapis/nodejs-datastore#readme) adds `[Datastore.KEY]`. Using ES6 Symbols presents all kinds of hurdles, especially when you try to serialize into a cache. So we add the property _keyStr which contains the encoded code. It is automatically used
     to reconstruct `[Datastore.KEY]`, if you use [[Dstore.readKey]].
 */
-export type DstoreEntry = {
+export interface DstoreEntry extends DstoreEntryWithoutKey {
   /* Datastore key provided by [@google-cloud/datastore](https://github.com/googleapis/nodejs-datastore#readme) */
   readonly [Datastore.KEY]?: Key;
   /** [Datastore.KEY] key */
   _keyStr: string;
   /** All User Data stored in the Datastore */
   readonly [key: string]: DstorePropertyValues;
-};
+}
 
 /** Represents the thing you pass to the save method. Also called "Entity" by Google */
 export type DstoreSaveEntity = {
