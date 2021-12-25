@@ -17,12 +17,6 @@ function getDstore(projectId) {
 
 test('keySerialize', async (t) => {
   const kvStore = getDstore('huwawi3Datastore');
-  t.deepEqual(kvStore.key(['testYodel', 123]), {
-    id: 123 as any, // typing in inconclusive here
-    kind: 'testYodel',
-    namespace: undefined,
-    path: ['testYodel', 123],
-  } as any);
   t.deepEqual(kvStore.key(['testYodel', 123]).path, ['testYodel', 123]);
   t.deepEqual(kvStore.key(['testYodel', 123]).serialized, {
     namespace: 'undefined',
@@ -34,6 +28,12 @@ test('keySerialize', async (t) => {
       },
     ],
   } as any);
+  // t.deepEqual(kvStore.key(['testYodel', 123]), {
+  //   id: 123 as any, // typing in inconclusive here
+  //   kind: 'testYodel',
+  //   namespace: undefined,
+  //   path: ['testYodel', 123],
+  // } as any);
 
   const ser = kvStore.keySerialize(kvStore.key(['testYodel', 123]));
   t.deepEqual(ser, 'agdodXdhd2kzcg8LEgl0ZXN0WW9kZWwYewyiAQR0ZXN0');
