@@ -33,6 +33,7 @@ See [the API documentation](http://mdornseif.io/datastore-api/classes/Dstore.htm
   - Other [Hidden Auto-Generated Datastore API Documentation](https://googleapis.dev/nodejs/datastore/latest/) with better navigation. Seems to contain more on the lower level access.
   - [SDK Source](https://github.com/googleapis/nodejs-datastore)
   - [API reference](https://cloud.google.com/datastore/docs/reference/data/rpc) helps to understand under-documented SDK.
+  - [grpc-js environment variables](https://github.com/grpc/grpc-node/blob/master/doc/environment_variables.md)
 
 - API Simplification
   - [google-cloud-datastore-node](https://www.npmjs.com/package/google-cloud-datastore-node)
