@@ -1,8 +1,8 @@
 /*
  * dstore-api.test.ts
  *
- * Created by Dr. Maximillian Dornseif 2021-12-10 in huwawi3backend 11.10.0
- * Copyright (c) 2021 HUDORA GmbH
+ * Created by Dr. Maximilian Dornseif 2021-12-10 in huwawi3backend 11.10.0
+ * Copyright (c) 2021 Dr. Maximilian Dornseif
  */
 
 import { Datastore } from '@google-cloud/datastore';
@@ -18,23 +18,16 @@ function getDstore(projectId) {
 test('keySerialize', async (t) => {
   const kvStore = getDstore('huwawi3Datastore');
   t.deepEqual(kvStore.key(['testYodel', 123]).path, ['testYodel', 123]);
-  t.deepEqual(kvStore.key(['testYodel', 123]).serialized, {
-    namespace: 'undefined',
-    path: [
-      'testYodel',
-      {
-        type: 'DatastoreInt',
-        value: '123',
-      },
-    ],
-  } as any);
-  // t.deepEqual(kvStore.key(['testYodel', 123]), {
-  //   id: 123 as any, // typing in inconclusive here
-  //   kind: 'testYodel',
+  // t.deepEqual(kvStore.key(['testYodel', 123]).serialized, {
   //   namespace: undefined,
-  //   path: ['testYodel', 123],
+  //   path: ['testYodel'],
   // } as any);
-
+  t.deepEqual(kvStore.key(['testYodel', 123]), {
+    id: 123 as any, // typing in inconclusive here
+    kind: 'testYodel',
+    namespace: undefined,
+    path: ['testYodel', 123],
+  } as any);
   const ser = kvStore.keySerialize(kvStore.key(['testYodel', 123]));
   t.deepEqual(ser, 'agdodXdhd2kzcg8LEgl0ZXN0WW9kZWwYewyiAQR0ZXN0');
   t.deepEqual(kvStore.keyFromSerialized(ser), {
@@ -53,8 +46,8 @@ test('keySerialize', async (t) => {
 //   });
 // });
 
-// describe("Lesen", () => {
-//   it("get numid", async () => {
+// describe("Read", () => {
+//   it("get num_id", async () => {
 //     expect.assertions(10);
 //     const kvStore = getDstore("huwawi3Datastore");
 //     const entity = { key: kvStore.key(["testYodel", 2]), data: { foo: "bar" } };
@@ -114,7 +107,7 @@ test('keySerialize', async (t) => {
 //     expect(kvStore.readKey(result)).toBeInstanceOf(Key);
 
 //     const result2 = await kvStore.getMulti([entity.key]);
-//     // getMulti returns a Array even foir single keys
+//     // getMulti returns a Array even for single keys
 //     expect(result2).toMatchInlineSnapshot(`
 //       Array [
 //         Object {
@@ -202,8 +195,8 @@ test('keySerialize', async (t) => {
 //       ]
 //     `);
 
-//     const result5 = await kvStore.getMulti([entity.key, kvStore.key(["YodelGibtEsNicht", 3])]);
-//     // getMulti returns a Array but obmits unknown keys
+//     const result5 = await kvStore.getMulti([entity.key, kvStore.key(["YodelNotThere", 3])]);
+//     // getMulti returns a Array but omits unknown keys
 //     // expect(Array.isArray(result)).toBeTruthy();
 //     expect(result5).toMatchInlineSnapshot(`
 //       Array [
@@ -231,7 +224,7 @@ test('keySerialize', async (t) => {
 //   it("get name", async () => {
 //     expect.assertions(3);
 //     const kvStore = getDstore("huwawi3Datastore");
-//     const entity = { key: kvStore.key(["testYodel", "zwei"]), data: { foo: "bar" } };
+//     const entity = { key: kvStore.key(["testYodel", "two"]), data: { foo: "bar" } };
 //     const commitResponse = await kvStore.save([entity]);
 //     expect(commitResponse?.[0]?.indexUpdates).toBe(3);
 //     // expect(commitResponse).toMatchInlineSnapshot(`
@@ -255,11 +248,11 @@ test('keySerialize', async (t) => {
 //         },
 //         "key": Key {
 //           "kind": "testYodel",
-//           "name": "zwei",
+//           "name": "two",
 //           "namespace": "test",
 //           "path": Array [
 //             "testYodel",
-//             "zwei",
+//             "two",
 //           ],
 //         },
 //       }
@@ -271,11 +264,11 @@ test('keySerialize', async (t) => {
 //         "foo": "bar",
 //         Symbol(KEY): Key {
 //           "kind": "testYodel",
-//           "name": "zwei",
+//           "name": "two",
 //           "namespace": "test",
 //           "path": Array [
 //             "testYodel",
-//             "zwei",
+//             "two",
 //           ],
 //         },
 //       }
@@ -366,8 +359,8 @@ test('keySerialize', async (t) => {
 //   it("update", async () => {
 //     expect.assertions(3);
 //     const kvStore = getDstore("huwawi3Datastore");
-//     const keyname = `4insert${Math.random()}`;
-//     const entity = { key: kvStore.key(["testYodel", keyname]), data: { foo: "bar" } };
+//     const keyName = `4insert${Math.random()}`;
+//     const entity = { key: kvStore.key(["testYodel", keyName]), data: { foo: "bar" } };
 
 //     // const request = kvStore.update([entity]);
 //     // await expect(request).rejects.toThrowError(Error);
@@ -415,8 +408,8 @@ test('keySerialize', async (t) => {
 //   it("insert", async () => {
 //     expect.assertions(4);
 //     const kvStore = getDstore("huwawi3Datastore");
-//     const keyname = `3insert${Math.random()}`;
-//     const entity = { key: kvStore.key(["testYodel", keyname]), data: { foo: "bar" } };
+//     const keyName = `3insert${Math.random()}`;
+//     const entity = { key: kvStore.key(["testYodel", keyName]), data: { foo: "bar" } };
 //     const commitResponse = await kvStore.insert([entity]);
 //     if (commitResponse?.[0]?.mutationResults?.[0]?.version) {
 //       commitResponse[0].mutationResults[0].version = 2;
@@ -436,7 +429,7 @@ test('keySerialize', async (t) => {
 //       }
 //     `
 //     );
-//     expect(entity.key.name).toMatch(keyname);
+//     expect(entity.key.name).toMatch(keyName);
 //     expect(entity.key.kind).toMatchInlineSnapshot(`"testYodel"`);
 
 //     const request = kvStore.insert([entity]);

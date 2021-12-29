@@ -71,7 +71,7 @@ export type DstorePropertyValues =
   | readonly DstorePropertyValues[]
   | { readonly [key: string]: DstorePropertyValues };
 
-export interface DstoreEntryWithoutKey {
+export interface IDstoreEntryWithoutKey {
   /** All User Data stored in the Datastore */
   readonly [key: string]: DstorePropertyValues;
 }
@@ -80,7 +80,7 @@ export interface DstoreEntryWithoutKey {
     [@google-cloud/datastore](https://github.com/googleapis/nodejs-datastore#readme) adds `[Datastore.KEY]`. Using ES6 Symbols presents all kinds of hurdles, especially when you try to serialize into a cache. So we add the property _keyStr which contains the encoded code. It is automatically used
     to reconstruct `[Datastore.KEY]`, if you use [[Dstore.readKey]].
 */
-export interface DstoreEntry extends DstoreEntryWithoutKey {
+export interface IDstoreEntry extends IDstoreEntryWithoutKey {
   /* Datastore key provided by [@google-cloud/datastore](https://github.com/googleapis/nodejs-datastore#readme) */
   readonly [Datastore.KEY]?: Key;
   /** [Datastore.KEY] key */
@@ -92,7 +92,7 @@ export interface DstoreEntry extends DstoreEntryWithoutKey {
 /** Represents the thing you pass to the save method. Also called "Entity" by Google */
 export type DstoreSaveEntity = {
   readonly key: Key;
-  readonly data: Omit<DstoreEntry, '_keyStr' | Datastore['KEY']>;
+  readonly data: Omit<IDstoreEntry, '_keyStr' | Datastore['KEY']>;
   readonly method?: 'insert' | 'update' | 'upsert';
   readonly excludeLargeProperties?: boolean;
   readonly excludeFromIndexes?: readonly string[];
@@ -104,12 +104,12 @@ type IDstore = {
   readonly key: (path: ReadonlyArray<PathType>) => Key;
   readonly keyFromSerialized: (text: string) => Key;
   readonly keySerialize: (key: Key) => string;
-  readonly readKey: (entry: DstoreEntry) => Key;
-  readonly get: (key: Key) => Promise<DstoreEntry | null>;
+  readonly readKey: (entry: IDstoreEntry) => Key;
+  readonly get: (key: Key) => Promise<IDstoreEntry | null>;
   readonly getMulti: (
     keys: ReadonlyArray<Key>
-  ) => Promise<ReadonlyArray<DstoreEntry | undefined>>;
-  readonly set: (key: Key, entry: DstoreEntry) => Promise<Key>;
+  ) => Promise<ReadonlyArray<IDstoreEntry | undefined>>;
+  readonly set: (key: Key, entry: IDstoreEntry) => Promise<Key>;
   readonly save: (
     entities: readonly DstoreSaveEntity[]
   ) => Promise<CommitResponse | undefined>;
@@ -132,7 +132,7 @@ type IDstore = {
   readonly runQuery: (
     query: Query | Omit<Query, 'run'>
   ) => Promise<RunQueryResponse>;
-  readonly allocateOneId: (kindname: string) => Promise<string>;
+  readonly allocateOneId: (kindName: string) => Promise<string>;
   readonly runInTransaction: <T>(func: { (): Promise<T>; (): T }) => Promise<T>;
 };
 
@@ -233,7 +233,7 @@ export class Dstore implements IDstore {
    *
    * @category Additional
    */
-  readKey(ent: DstoreEntry): Key {
+  readKey(ent: IDstoreEntry): Key {
     assertIsObject(ent);
     let ret = ent[Datastore.KEY];
     if (ent._keyStr && !ret) {
@@ -254,8 +254,8 @@ export class Dstore implements IDstore {
    * @internal
    */
   private fixKeys(
-    entities: ReadonlyArray<Partial<DstoreEntry> | undefined>
-  ): Array<DstoreEntry | undefined> {
+    entities: ReadonlyArray<Partial<IDstoreEntry> | undefined>
+  ): Array<IDstoreEntry | undefined> {
     entities.forEach((x) => {
       if (!!x?.[Datastore.KEY] && x[Datastore.KEY]) {
         assertIsDefined(x[Datastore.KEY]);
@@ -264,7 +264,7 @@ export class Dstore implements IDstore {
         x._keyStr = this.keySerialize(x[Datastore.KEY] as Key);
       }
     });
-    return entities as Array<DstoreEntry | undefined>;
+    return entities as Array<IDstoreEntry | undefined>;
   }
 
   /** `get()` reads a [[DstoreEntry]] from the Datastore.
@@ -282,7 +282,7 @@ export class Dstore implements IDstore {
    *
    * @category Datastore Drop-In
    */
-  async get(key: Key): Promise<DstoreEntry | null> {
+  async get(key: Key): Promise<IDstoreEntry | null> {
     assertIsObject(key);
     assert(!Array.isArray(key));
     const getresult = await this.getMulti([key]);
@@ -307,7 +307,7 @@ export class Dstore implements IDstore {
    */
   async getMulti(
     keys: readonly Key[]
-  ): Promise<ReadonlyArray<DstoreEntry | undefined>> {
+  ): Promise<ReadonlyArray<IDstoreEntry | undefined>> {
     // assertIsArray(keys);
     try {
       return this.fixKeys(
@@ -339,7 +339,7 @@ export class Dstore implements IDstore {
    *
    * @category Additional
    */
-  async set(key: Key, data: DstoreEntry): Promise<Key> {
+  async set(key: Key, data: IDstoreEntry): Promise<Key> {
     assertIsObject(key);
     assertIsObject(data);
     const saveEntity = { key, data };
