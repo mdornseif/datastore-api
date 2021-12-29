@@ -6,7 +6,7 @@
  * In future https://github.com/graphql/dataloader might be used for batching.
  *
  * Created by Dr. Maximillian Dornseif 2021-12-05 in huwawi3backend 11.10.0
- * Copyright (c) Dr. Maximillian Dornseif
+ * Copyright (c) 2021 Dr. Maximillian Dornseif
  */
 
 import { AsyncLocalStorage } from 'async_hooks';
@@ -48,7 +48,14 @@ export {
 const debug = Debug('ds:api');
 
 /** @ignore */
+
+/** Use instead of Datastore.KEY
+ *
+ * Even better: use `_key` instead.
+ */
 const transactionAsyncLocalStorage = new AsyncLocalStorage();
+
+export const KEYSYM = Datastore.KEY;
 
 export type IGqlFilterTypes = boolean | string | number;
 
