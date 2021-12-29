@@ -32,9 +32,8 @@ import {
   assertIsObject,
   assertIsString,
 } from 'assertate';
+import Debug from 'debug';
 import { Writable } from 'ts-essentials';
-
-// import Debug from 'debug';
 
 /** @ignore */
 export {
@@ -46,7 +45,7 @@ export {
 } from '@google-cloud/datastore';
 
 /** @ignore */
-// const debug = Debug('h3:dstore');
+const debug = Debug('ds:api');
 
 /** @ignore */
 const transactionAsyncLocalStorage = new AsyncLocalStorage();
@@ -68,12 +67,12 @@ export type DstorePropertyValues =
   | undefined
   | Buffer
   | Key
-  | readonly DstorePropertyValues[]
-  | { readonly [key: string]: DstorePropertyValues };
+  | DstorePropertyValues[]
+  | { [key: string]: DstorePropertyValues };
 
 export interface IDstoreEntryWithoutKey {
   /** All User Data stored in the Datastore */
-  readonly [key: string]: DstorePropertyValues;
+  [key: string]: DstorePropertyValues;
 }
 
 /** Represents what is actually stored inside the Datastore, called "Entity" by Google
@@ -86,54 +85,50 @@ export interface IDstoreEntry extends IDstoreEntryWithoutKey {
   /** [Datastore.KEY] key */
   _keyStr: string;
   /** All User Data stored in the Datastore */
-  readonly [key: string]: DstorePropertyValues;
+  [key: string]: DstorePropertyValues;
 }
 
 /** Represents the thing you pass to the save method. Also called "Entity" by Google */
 export type DstoreSaveEntity = {
-  readonly key: Key;
-  readonly data: Omit<IDstoreEntry, '_keyStr' | Datastore['KEY']>;
-  readonly method?: 'insert' | 'update' | 'upsert';
-  readonly excludeLargeProperties?: boolean;
-  readonly excludeFromIndexes?: readonly string[];
+  key: Key;
+  data: Omit<IDstoreEntry, '_keyStr' | Datastore['KEY']>;
+  method?: 'insert' | 'update' | 'upsert';
+  excludeLargeProperties?: boolean;
+  excludeFromIndexes?: readonly string[];
 };
 
 type IDstore = {
   /** Accessible by Users of the library. Keep in mind that you will access outside transactions created by [[runInTransaction]]. */
   readonly datastore: Datastore;
-  readonly key: (path: ReadonlyArray<PathType>) => Key;
-  readonly keyFromSerialized: (text: string) => Key;
-  readonly keySerialize: (key: Key) => string;
-  readonly readKey: (entry: IDstoreEntry) => Key;
-  readonly get: (key: Key) => Promise<IDstoreEntry | null>;
-  readonly getMulti: (
+  key: (path: ReadonlyArray<PathType>) => Key;
+  keyFromSerialized: (text: string) => Key;
+  keySerialize: (key: Key) => string;
+  readKey: (entry: IDstoreEntry) => Key;
+  get: (key: Key) => Promise<IDstoreEntry | null>;
+  getMulti: (
     keys: ReadonlyArray<Key>
   ) => Promise<ReadonlyArray<IDstoreEntry | undefined>>;
-  readonly set: (key: Key, entry: IDstoreEntry) => Promise<Key>;
-  readonly save: (
+  set: (key: Key, entry: IDstoreEntry) => Promise<Key>;
+  save: (
     entities: readonly DstoreSaveEntity[]
   ) => Promise<CommitResponse | undefined>;
-  readonly insert: (
+  insert: (
     entities: readonly DstoreSaveEntity[]
   ) => Promise<CommitResponse | undefined>;
-  readonly update: (
+  update: (
     entities: readonly DstoreSaveEntity[]
   ) => Promise<CommitResponse | undefined>;
-  readonly delete: (
-    keys: readonly Key[]
-  ) => Promise<CommitResponse | undefined>;
-  readonly createQuery: (kind: string) => Query;
-  readonly query: (
+  delete: (keys: readonly Key[]) => Promise<CommitResponse | undefined>;
+  createQuery: (kind: string) => Query;
+  query: (
     kind: string,
     filters?: TGqlFilterList,
     limit?: number,
     orders?: readonly string[]
   ) => Promise<RunQueryResponse>;
-  readonly runQuery: (
-    query: Query | Omit<Query, 'run'>
-  ) => Promise<RunQueryResponse>;
-  readonly allocateOneId: (kindName: string) => Promise<string>;
-  readonly runInTransaction: <T>(func: { (): Promise<T>; (): T }) => Promise<T>;
+  runQuery: (query: Query | Omit<Query, 'run'>) => Promise<RunQueryResponse>;
+  allocateOneId: (kindName: string) => Promise<string>;
+  runInTransaction: <T>(func: { (): Promise<T>; (): T }) => Promise<T>;
 };
 
 /** Dstore implements a slightly more accessible version of the [Google Cloud Datastore: Node.js Client](https://cloud.google.com/nodejs/docs/reference/datastore/latest)
@@ -260,7 +255,7 @@ export class Dstore implements IDstore {
       if (!!x?.[Datastore.KEY] && x[Datastore.KEY]) {
         assertIsDefined(x[Datastore.KEY]);
         assertIsObject(x[Datastore.KEY]);
-        // Scheinbar stolpert TypesScript über Symbole als Attribut
+        // Old TypesScript has problems with symbols as a property
         x._keyStr = this.keySerialize(x[Datastore.KEY] as Key);
       }
     });
@@ -285,8 +280,8 @@ export class Dstore implements IDstore {
   async get(key: Key): Promise<IDstoreEntry | null> {
     assertIsObject(key);
     assert(!Array.isArray(key));
-    const getresult = await this.getMulti([key]);
-    return getresult?.[0] || null;
+    const result = await this.getMulti([key]);
+    return result?.[0] || null;
   }
 
   /** `getMulti()` reads several [[DstoreEntry]]s from the Datastore.
@@ -307,7 +302,7 @@ export class Dstore implements IDstore {
    */
   async getMulti(
     keys: readonly Key[]
-  ): Promise<ReadonlyArray<IDstoreEntry | undefined>> {
+  ): Promise<Array<IDstoreEntry | undefined>> {
     // assertIsArray(keys);
     try {
       return this.fixKeys(
@@ -371,7 +366,7 @@ export class Dstore implements IDstore {
   ): Promise<CommitResponse | undefined> {
     assertIsArray(entities);
     try {
-      // Innerhalb von Transaktionen bekommen wir keine Antwort!
+      // Within Transaction we dont get any answer here!
       // [ { mutationResults: [ [Object], [Object] ], indexUpdates: 51 } ]
       for (const e of entities) {
         assertIsObject(e.key);
@@ -500,8 +495,8 @@ export class Dstore implements IDstore {
     assertIsNumber(limit);
     try {
       const q = this.createQuery(kindName);
-      for (const fspec of filters) {
-        q.filter(...fspec);
+      for (const filterSpec of filters) {
+        q.filter(...filterSpec);
       }
       for (const orderField of orders) {
         q.order(orderField);
@@ -551,7 +546,7 @@ export class Dstore implements IDstore {
 
     [[runInTransaction]] is modelled after Python 2.7 [ndb's `@ndb.transactional` feature](https://cloud.google.com/appengine/docs/standard/python/ndb/transactions). This is based on node's [AsyncLocalStorage](https://nodejs.org/docs/latest-v14.x/api/async_hooks.html).
 
-    Transactions frequently fail if you try to access the same data via in a transaction. See the [Documentation on Locking](https://cloud.google.com/datastore/docs/concepts/transactions#transaction_locks) for further reference. You are advised to use [p-limit](https://github.com/sindresorhus/p-limit)(1) to seralize transactions touching the same resource. This should work nicely with node's single process model. It is a much bigger problem on shared-nothing approaches, like Python on App Engine.
+    Transactions frequently fail if you try to access the same data via in a transaction. See the [Documentation on Locking](https://cloud.google.com/datastore/docs/concepts/transactions#transaction_locks) for further reference. You are advised to use [p-limit](https://github.com/sindresorhus/p-limit)(1) to serialize transactions touching the same resource. This should work nicely with node's single process model. It is a much bigger problem on shared-nothing approaches, like Python on App Engine.
 
     Transactions might be wrapped in [p-retry](https://github.com/sindresorhus/p-retry) to implement automatically retrying them with exponential back-off should they fail due to contention.
    */
@@ -559,25 +554,21 @@ export class Dstore implements IDstore {
     let ret;
     const transaction: Transaction = this.datastore.transaction();
     await transactionAsyncLocalStorage.run(transaction, async () => {
-      const [transactionInfo, _transactionRunApiResponse] =
+      const [transactionInfo, transactionRunApiResponse] =
         await transaction.run();
       let commitApiResponse;
       try {
         ret = await func();
       } catch (error) {
-        const _rollbackInfo = await transaction.rollback();
-        // logger.info(
-        //   {
-        //     err: error,
-        //     transactionInfo,
-        //     transactionRunApiResponse,
-        //     rollbackInfo,
-        //     ret,
-        //     commitApiResponse,
-        //   },
-        //   'Transaction failed'
-        // );
-        // console.error(error)
+        const rollbackInfo = await transaction.rollback();
+        debug(
+          'Transaction failed, rollback initiated: %O  %O %O %O',
+          transactionInfo,
+          transactionRunApiResponse,
+          rollbackInfo,
+          error
+        );
+        console.error(error);
         throw process.env.NODE_ENV === 'test'
           ? error
           : new DstoreError('datastore.transaction execution error', error);
@@ -585,17 +576,14 @@ export class Dstore implements IDstore {
       try {
         commitApiResponse = await transaction.commit()[0];
       } catch (error) {
-        // logger.info(
-        //   {
-        //     err: error,
-        //     transactionInfo,
-        //     transactionRunApiResponse,
-        //     ret,
-        //     commitApiResponse,
-        //   },
-        //   'Transaction commit failed'
-        // );
-        // console.error(error)
+        debug(
+          'Transaction commit failed: %O %O %O %O ret: %O',
+          transactionInfo,
+          transactionRunApiResponse,
+          commitApiResponse,
+          error,
+          ret
+        );
         throw process.env.NODE_ENV === 'test'
           ? error
           : new DstoreError('datastore.transaction execution error', error);
