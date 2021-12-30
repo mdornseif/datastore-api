@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/mdornseif/datastore-api/compare/v1.1.3...v1.2.0) (2021-12-30)
+
+
+### Features
+
+* add `query(... selection)` ([e9f8053](https://github.com/mdornseif/datastore-api/commit/e9f8053fa98f496e69ccf83e649e7c1502751f16))
+* add KEYSYM ([d97eff0](https://github.com/mdornseif/datastore-api/commit/d97eff09f0c7dd60caa860eda45975438d369920))
+* debug log; removed readonly from several types ([f1fcdb6](https://github.com/mdornseif/datastore-api/commit/f1fcdb62551c3c624fcfd67f550f40a5bbd38138))
+
 ### [1.1.3](https://github.com/mdornseif/datastore-api/compare/v1.1.2...v1.1.3) (2021-12-29)
 
 ### [1.1.2](https://github.com/mdornseif/datastore-api/compare/v1.1.1...v1.1.2) (2021-12-29)
