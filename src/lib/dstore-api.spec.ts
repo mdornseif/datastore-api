@@ -6,50 +6,54 @@
  */
 
 import { Datastore } from '@google-cloud/datastore';
-// import { assertIsObject, isNumber } from 'assertate';
 import test from 'ava';
+import Emulator from 'google-datastore-emulator';
 
 import { Dstore } from './dstore-api';
+
+process.env.GCLOUD_PROJECT = 'project-id'; // Set the datastore project Id globally
+let emulator;
+
+test.before(async (_t) => {
+  emulator = new Emulator({ useDocker: false, debug: false });
+  await emulator.start();
+});
+
+test.after('cleanup', async (_t) => {
+  await emulator.stop();
+});
 
 function getDstore(projectId) {
   return new Dstore(new Datastore({ projectId }));
 }
 
 test('keySerialize', async (t) => {
-  const kvStore = getDstore('huwawi3Datastore');
+  const kvStore = getDstore('test');
   t.deepEqual(kvStore.key(['testYodel', 123]).path, ['testYodel', 123]);
-  // t.deepEqual(kvStore.key(['testYodel', 123]).serialized, {
-  //   namespace: undefined,
-  //   path: ['testYodel'],
-  // } as any);
-  t.deepEqual(kvStore.key(['testYodel', 123]), {
+  t.deepEqual(JSON.parse(JSON.stringify(kvStore.key(['testYodel', 123]))), {
     id: 123 as any, // typing in inconclusive here
     kind: 'testYodel',
-    namespace: undefined,
     path: ['testYodel', 123],
   } as any);
   const ser = kvStore.keySerialize(kvStore.key(['testYodel', 123]));
-  t.deepEqual(ser, 'agdodXdhd2kzcg8LEgl0ZXN0WW9kZWwYewyiAQR0ZXN0');
-  t.deepEqual(kvStore.keyFromSerialized(ser), {
+  t.deepEqual(ser, 'agByDwsSCXRlc3RZb2RlbBh7DA');
+  t.deepEqual(JSON.parse(JSON.stringify(kvStore.keyFromSerialized(ser))), {
     id: '123',
     kind: 'testYodel',
-    namespace: 'undefined',
     path: ['testYodel', '123'],
   } as any);
 });
 
-//   it("allocation", async () => {
-//     expect.assertions(1);
-//     const kvStore = getDstore("huwawi3Datastore");
-//     const id = await kvStore.allocateOneId();
-//     expect(id).toMatch(/\d+/);
-//   });
-// });
+test('allocation', async (t) => {
+  const kvStore = getDstore('test');
+  const id = await kvStore.allocateOneId();
+  t.regex(id, /\d+/);
+});
 
 // describe("Read", () => {
 //   it("get num_id", async () => {
 //     expect.assertions(10);
-//     const kvStore = getDstore("huwawi3Datastore");
+//     const kvStore = getDstore("test");
 //     const entity = { key: kvStore.key(["testYodel", 2]), data: { foo: "bar" } };
 //     const entity2 = { key: kvStore.key(["testYodel", 3]), data: { foo: "bar" } };
 //     const commitResponse = await kvStore.save([entity, entity2]);
@@ -275,61 +279,34 @@ test('keySerialize', async (t) => {
 //     `);
 //   });
 
-//   it("query", async () => {
-//     expect.assertions(5);
-//     const kvStore = getDstore("huwawi3Datastore");
-//     const entity = { key: kvStore.key(["testYodel", 3]), data: { foo: "bar" } };
-//     const data = await kvStore.save([entity]);
-//     const query = kvStore.createQuery("testYodel");
-//     query.limit(1);
-//     const [entities, runQueryInfo] = await kvStore.runQuery(query);
-//     expect(entities.length).toBe(1);
-//     expect(entities?.[0]?.foo).toMatchInlineSnapshot(`"bar"`);
-//     expect(entities?.[0]?.[Datastore.KEY]?.kind).toMatchInlineSnapshot(`"testYodel"`);
-//     // expect(entities).toMatchInlineSnapshot(`
-//     //     Array [
-//     //       Object {
-//     //         "foo": "bar",
-//     //         Symbol(KEY): Key {
-//     //           "id": "3",
-//     //           "kind": "testYodel",
-//     //           "namespace": "test",
-//     //           "path": Array [
-//     //             "testYodel",
-//     //             "3",
-//     //           ],
-//     //         },
-//     //       },
-//     //     ]
-//     // `);
-//     expect(runQueryInfo).toMatchInlineSnapshot(
-//       { endCursor: expect.any(String) },
-//       `
-//       Object {
-//         "endCursor": Any<String>,
-//         "moreResults": "MORE_RESULTS_AFTER_LIMIT",
-//       }
-//     `
-//     );
-//     const result2 = await kvStore.query("testYodel", [], 1);
-//     expect(result2[0]).toMatchInlineSnapshot(`
-//       Array [
-//         Object {
-//           "foo": "bar",
-//           Symbol(KEY): Key {
-//             "id": "2",
-//             "kind": "testYodel",
-//             "namespace": "test",
-//             "path": Array [
-//               "testYodel",
-//               "2",
-//             ],
-//           },
-//         },
-//       ]
-//     `);
-//   });
-// });
+test('query', async (t) => {
+  const kvStore = getDstore('test');
+  const entity = {
+    key: kvStore.key(['testYodel', '3']),
+    data: { foo: 'bar', baz: 'baz' },
+  };
+
+  // legacy interface
+  await kvStore.save([entity]);
+  const query = kvStore.createQuery('testYodel');
+  query.limit(1);
+  const [entities, runQueryInfo] = await kvStore.runQuery(query);
+  t.is(entities.length, 1);
+  t.is(entities?.[0]?.foo, 'bar');
+  t.is(entities?.[0]?.[Datastore.KEY]?.kind, 'testYodel');
+  t.is(runQueryInfo?.moreResults, 'MORE_RESULTS_AFTER_LIMIT');
+
+  // modern interface
+  const [result2] = await kvStore.query('testYodel', [], 1, [], ['baz']);
+  t.is(result2.length, 1);
+  // foo is removed by selection
+  t.deepEqual(JSON.parse(JSON.stringify(result2?.[0])), {
+    baz: 'baz',
+  });
+
+  const key = kvStore.readKey(result2?.[0]);
+  t.is(key.id, entity.key.id);
+});
 
 // describe("Writing", () => {
 //   it("save / upsert", async () => {

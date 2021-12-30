@@ -131,7 +131,9 @@ type IDstore = {
     kind: string,
     filters?: TGqlFilterList,
     limit?: number,
-    orders?: readonly string[]
+    ordering?: readonly string[],
+    selection?: readonly string[],
+    cursor?: string
   ) => Promise<RunQueryResponse>;
   runQuery: (query: Query | Omit<Query, 'run'>) => Promise<RunQueryResponse>;
   allocateOneId: (kindName: string) => Promise<string>;
@@ -477,8 +479,13 @@ export class Dstore implements IDstore {
    * @param kind Name of the [[Datastore]][Kind](https://cloud.google.com/datastore/docs/concepts/entities#kinds_and_identifiers) ("Table") which should be searched.
    *
    * @category Datastore Drop-In
-   */ createQuery(kind: string): Query {
-    return this.getDoT().createQuery(kind);
+   */
+  createQuery(kind: string): Query {
+    try {
+      return this.getDoT().createQuery(kind);
+    } catch (error) {
+      throw new DstoreError('datastore.createQuery error', error);
+    }
   }
 
   async runQuery(query: Query | Omit<Query, 'run'>): Promise<RunQueryResponse> {
@@ -495,7 +502,9 @@ export class Dstore implements IDstore {
     kindName: string,
     filters: TGqlFilterList = [],
     limit = 2500,
-    orders: readonly string[] = []
+    ordering: readonly string[] = [],
+    selection: string[] = [],
+    cursor?: string
   ): Promise<RunQueryResponse> {
     assertIsString(kindName);
     assertIsArray(filters);
@@ -505,22 +514,25 @@ export class Dstore implements IDstore {
       for (const filterSpec of filters) {
         q.filter(...filterSpec);
       }
-      for (const orderField of orders) {
+      for (const orderField of ordering) {
         q.order(orderField);
       }
       if (limit > 0) {
         q.limit(limit);
       }
+      if (selection.length > 0) {
+        q.select(selection);
+      }
       return await this.runQuery(q);
     } catch (error) {
-      console.error(error, { kindName, filters, limit, orders });
+      console.error(error, { kindName, filters, limit, ordering });
       throw process.env.NODE_ENV === 'test'
         ? error
         : new DstoreError('datastore.query error', error, {
             kindName,
             filters,
             limit,
-            orders,
+            ordering,
           });
     }
   }

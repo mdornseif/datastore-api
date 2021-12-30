@@ -24,7 +24,7 @@ Find the full documentation [here](http://mdornseif.io/datastore-api/classes/Dst
 
 See [the API documentation](http://mdornseif.io/datastore-api/classes/Dstore.html) for Details.
 
-# See also
+## See also
 
 - Google Documentation
 
