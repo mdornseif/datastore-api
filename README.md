@@ -22,7 +22,7 @@ Main differences:
 
 Find the full documentation [here](http://mdornseif.io/datastore-api/classes/Dstore.html). In there also some of the idiosyncrasies of using the Datastore are explained.
 
-See [the API documentation](http://mdornseif.io/datastore-api/classes/Dstore.html) for Details.
+See [the API documentation](http://mdornseif.io/datastore-api/classes/Dstore.html) for Details, [Github](https://github.com/mdornseif/datastore-api) for source.
 
 ## See also
 
@@ -33,7 +33,7 @@ See [the API documentation](http://mdornseif.io/datastore-api/classes/Dstore.htm
   - Other [Hidden Auto-Generated Datastore API Documentation](https://googleapis.dev/nodejs/datastore/latest/) with better navigation. Seems to contain more on the lower level access.
   - [SDK Source](https://github.com/googleapis/nodejs-datastore)
   - [API reference](https://cloud.google.com/datastore/docs/reference/data/rpc) helps to understand under-documented SDK.
-  - [grpc-js environment variables](https://github.com/grpc/grpc-node/blob/master/doc/environment_variables.md) - try[GRPC_VERBOSITY=DEBUG GRPC_TRACE=all yarn test](https://github.com/grpc/grpc-node/blob/master/TROUBLESHOOTING.md)
+  - [grpc-js environment variables](https://github.com/grpc/grpc-node/blob/master/doc/environment_variables.md) - try [GRPC_VERBOSITY=DEBUG GRPC_TRACE=all yarn test](https://github.com/grpc/grpc-node/blob/master/TROUBLESHOOTING.md)
 
 - API Simplification
   - [google-cloud-datastore-node](https://www.npmjs.com/package/google-cloud-datastore-node)

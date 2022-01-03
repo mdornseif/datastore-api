@@ -145,18 +145,18 @@ type IDstore = {
 [@google-cloud/datastore](https://github.com/googleapis/nodejs-datastore#readme) is a strange beast: [The documentation is auto generated](https://cloud.google.com/nodejs/docs/reference/datastore/latest) and completely shy of documenting any advanced concepts.
 (Example: If you ask the datastore to auto-generate keys during save: how do you retrieve the generated key?) Generally I suggest to look at the Python 2.x [db](https://cloud.google.com/appengine/docs/standard/python/datastore/api-overview) and [ndb](https://cloud.google.com/appengine/docs/standard/python/ndb) documentation to get a better explanation of the workings of the datastore.
 
-Also the typings are strange. The Google provided type `Entities` can be the on disk representation, the same but including a key reference (`Datastore.KEY` - [[DstoreEntry]]), a list of these  or a structured object containing the on disk representation under the `data` property and a `key` property and maybe some configuration like `excludeFromIndexes` ([[DstoreSaveEntity]]) or a list of these.
+Also the typings are strange. The Google provided type `Entities` can be the on disk representation, the same but including a key reference (`Datastore.KEY` - [[IDstoreEntry]]), a list of these  or a structured object containing the on disk representation under the `data` property and a `key` property and maybe some configuration like `excludeFromIndexes` ([[DstoreSaveEntity]]) or a list of these.
 
 KvStore tries to abstract away most surprises the datastore provides to you but als tries to stay as API compatible as possible to [@google-cloud/datastore](https://github.com/googleapis/nodejs-datastore).
 
 Main differences:
 
 - Everything asynchronous is Promise-based - no callbacks.
-- [[get]] always returns a single [[DstoreEntry]].
-- [[getMulti]] always returns an Array<[[DstoreEntry]]> of the same length as the input Array. Items not found are represented by null.
+- [[get]] always returns a single [[IDstoreEntry]].
+- [[getMulti]] always returns an Array<[[IDstoreEntry]]> of the same length as the input Array. Items not found are represented by null.
 - [[set]] is called with `(key, value)` and always returns the complete [[Key]] of the entity being written. Keys are normalized, numeric IDs are always encoded as strings.
 - [[key]] handles [[Key]] object instantiation for you.
-- [[readKey]] extracts the key from an [[DstoreEntry]] you have read without the need of fancy `Symbol`-based access to `entity[Datastore.KEY]`. If needed, it tries to deserialize `_keyStr` to create `entity[Datastore.KEY]`. This ist important when rehydrating an [[DstoreEntry]] from a serializing cache.
+- [[readKey]] extracts the key from an [[IDstoreEntry]] you have read without the need of fancy `Symbol`-based access to `entity[Datastore.KEY]`. If needed, it tries to deserialize `_keyStr` to create `entity[Datastore.KEY]`. This ist important when rehydrating an [[IDstoreEntry]] from a serializing cache.
 - [[allocateOneId]] returns a single numeric string encoded unique datastore id without the need of fancy unpacking.
 - [[runInTransaction]] allows you to provide a function to be executed inside an transaction without the need of passing around the transaction object. This is modelled after Python 2.7 [ndb's `@ndb.transactional` feature](https://cloud.google.com/appengine/docs/standard/python/ndb/transactions). This is implemented via node's [AsyncLocalStorage](https://nodejs.org/docs/latest-v14.x/api/async_hooks.html).
 - [[keySerialize]] is synchronous.
@@ -230,10 +230,10 @@ export class Dstore implements IDstore {
     return this.urlSaveKey.legacyDecode(text);
   }
 
-  /** `readKey()` extracts the [[Key]] from an [[DstoreEntry]].
+  /** `readKey()` extracts the [[Key]] from an [[IDstoreEntry]].
    *
    * Is is an alternative to `entity[Datastore.KEY]` which tends to fail in various contexts and also confuses older Typescript compilers.
-   * It can extract the [[Key]] form a [[DstoreEntry]] which has been serialized to JSON by leveraging the property `_keyStr`.
+   * It can extract the [[Key]] form a [[IDstoreEntry]] which has been serialized to JSON by leveraging the property `_keyStr`.
    *
    * @category Additional
    */
@@ -251,7 +251,7 @@ export class Dstore implements IDstore {
     return ret;
   }
 
-  /** `fixKeys()` is called for all [[DstoreEntry]]sa returned from [[Dstore]].
+  /** `fixKeys()` is called for all [[IDstoreEntry]]sa returned from [[Dstore]].
    *
    * Is ensures that besides `entity[Datastore.KEY]` there is `_keyStr` to be leveraged by [[readKey]].
    *
@@ -271,9 +271,9 @@ export class Dstore implements IDstore {
     return entities as Array<IDstoreEntry | undefined>;
   }
 
-  /** `get()` reads a [[DstoreEntry]] from the Datastore.
+  /** `get()` reads a [[IDstoreEntry]] from the Datastore.
    *
-   * It returns [[DstoreEntry]] or `null` if not found.
+   * It returns [[IDstoreEntry]] or `null` if not found.
 
    * The underlying Datastore API Call is [lookup](https://cloud.google.com/datastore/docs/reference/data/rest/v1/projects/lookup).
    *
@@ -282,7 +282,7 @@ export class Dstore implements IDstore {
    * Differences between [[Dstore.get]] and [[Datastore.get]]:
    *
    * - [Dstore.get]] takes a single [[Key]] as Parameter, no Array. Check [[getMulti]] if you want Arrays.
-   * - [Dstore.get]] returns a single [[DstoreEntry]], no Array.
+   * - [Dstore.get]] returns a single [[IDstoreEntry]], no Array.
    *
    * @category Datastore Drop-In
    */
@@ -293,9 +293,9 @@ export class Dstore implements IDstore {
     return result?.[0] || null;
   }
 
-  /** `getMulti()` reads several [[DstoreEntry]]s from the Datastore.
+  /** `getMulti()` reads several [[IDstoreEntry]]s from the Datastore.
    *
-   * It returns a list of [[DstoreEntry]]s or `null` if not found.
+   * It returns a list of [[IDstoreEntry]]s or `null` if not found.
 
    * The underlying Datastore API Call is [lookup](https://cloud.google.com/datastore/docs/reference/data/rest/v1/projects/lookup).
    *
@@ -304,7 +304,7 @@ export class Dstore implements IDstore {
    * Differences between [[Dstore.getMulti]] and [[Datastore.get]]:
    *
    * - [[Dstore.getMulti]] always takes an Array of [[Key]]s as Parameter.
-   * - [[Dstore.getMulti]] returns always a Array of [[DstoreEntry]], or null.
+   * - [[Dstore.getMulti]] returns always a Array of [[IDstoreEntry]], or null.
    * - [[Datastore.get]] has many edge cases - e.g. when not being able to find any of the provided keys - which return surprising results. [[Dstore.getMulti]] always returns an Array. TODO: return a Array with the same length as the Input.
    *
    * @category Datastore Drop-In
@@ -368,6 +368,20 @@ export class Dstore implements IDstore {
    * On every subsequent `save()` an string encoded number representation is returned.
    * Dstore normalizes that and always returns an string encoded number representation.
    *
+   * Each [[DstoreSaveEntity]] can have an `excludeFromIndexes` property which is somewhat underdocumented.
+   * It can use something like JSON-Path notation
+   * ([Source](https://github.com/googleapis/nodejs-datastore/blob/2941f2f0f132b41534e303d441d837051ce88fd7/src/index.ts#L948))
+   * [.*](https://github.com/googleapis/nodejs-datastore/blob/406b15d2014087172df617c6e0a397a2c0902c5f/test/index.ts#L1598),
+   * [parent[]](https://github.com/googleapis/nodejs-datastore/blob/406b15d2014087172df617c6e0a397a2c0902c5f/test/index.ts#L1672),
+   * [parent.*](https://github.com/googleapis/nodejs-datastore/blob/406b15d2014087172df617c6e0a397a2c0902c5f/test/index.ts#L1672),
+   * [parent[].*](https://github.com/googleapis/nodejs-datastore/blob/406b15d2014087172df617c6e0a397a2c0902c5f/test/index.ts#L1672)
+   * and [more complex patterns](https://github.com/googleapis/nodejs-datastore/blob/406b15d2014087172df617c6e0a397a2c0902c5f/test/index.ts#L1754)
+   * seem to be supported patterns.
+   *
+   * If the caller has not provided an `excludeLargeProperties` in a [[DstoreSaveEntity]] we will default it
+   * to `excludeLargeProperties: true`. Without this you can not store strings longer than 1500 bytes easily
+   * ([source](https://github.com/googleapis/nodejs-datastore/blob/c7a08a8382c6706ccbfbbf77950babf40bac757c/src/entity.ts#L961)).
+   *
    * @category Datastore Drop-In
    */
   async save(
@@ -375,12 +389,16 @@ export class Dstore implements IDstore {
   ): Promise<CommitResponse | undefined> {
     assertIsArray(entities);
     try {
-      // Within Transaction we dont get any answer here!
+      // Within Transaction we don't get any answer here!
       // [ { mutationResults: [ [Object], [Object] ], indexUpdates: 51 } ]
       for (const e of entities) {
         assertIsObject(e.key);
         assertIsObject(e.data);
         this.fixKeys([e.data]);
+        e.excludeLargeProperties =
+          e.excludeLargeProperties === undefined
+            ? true
+            : e.excludeLargeProperties;
       }
       return (await this.getDoT().save(entities)) || undefined;
     } catch (error) {
