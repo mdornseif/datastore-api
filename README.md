@@ -1,3 +1,7 @@
+[![version](https://img.shields.io/npm/v/datastore-api.svg?style=flat-square)](https://npmjs.org/datastore-api)
+[![license](https://img.shields.io/npm/l/datastore-api?color=%23007a1f&style=flat-square)](https://github.com/mdornseif/datastore-api/blob/master/LICENSE)
+[![downloads](https://img.shields.io/npm/dm/datastore-api?style=flat-square&color=%23007a1f)](https://npmcharts.com/compare/datastore-api)
+
 # datastore-api
 
 Simplified, more consistent API for Google Cloud Datastore.
