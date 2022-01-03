@@ -5528,10 +5528,10 @@ trim-repeated@^1.0.0:
   dependencies:
     escape-string-regexp "^1.0.2"
 
-ts-essentials@^9.0.0:
-  version "9.0.0"
-  resolved "https://registry.yarnpkg.com/ts-essentials/-/ts-essentials-9.0.0.tgz#6196b7f390926429256c70951c8edd260e8e5097"
-  integrity sha512-pow5YBSknf/PyoDhr8vsb93+hZah/jSzhdHA3GMjSzUuZIDZH+rV7tvN5DCbN4hi7QJXdteDv8D9HdDCSwXBUw==
+ts-essentials@9.1.2:
+  version "9.1.2"
+  resolved "https://registry.yarnpkg.com/ts-essentials/-/ts-essentials-9.1.2.tgz#46db6944b73b4cd603f3d959ef1123c16ba56f59"
+  integrity sha512-EaSmXsAhEiirrTY1Oaa7TSpei9dzuCuFPmjKRJRPamERYtfaGS8/KpOSbjergLz/Y76/aZlV9i/krgzsuWEBbg==
 
 ts-node@^10.4.0:
   version "10.4.0"
