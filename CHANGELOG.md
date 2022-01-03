@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/mdornseif/datastore-api/compare/v1.2.0...v1.3.0) (2022-01-03)
+
+
+### Features
+
+* Set excludeLargeProperties by default. ([289cd28](https://github.com/mdornseif/datastore-api/commit/289cd289651b0c34f36098370b3dfbe249790c5a))
+
 ## [1.2.0](https://github.com/mdornseif/datastore-api/compare/v1.1.3...v1.2.0) (2021-12-30)
 
 
