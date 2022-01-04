@@ -15,7 +15,7 @@ process.env.GCLOUD_PROJECT = 'project-id'; // Set the datastore project Id globa
 let emulator;
 
 test.before(async (_t) => {
-  emulator = new Emulator({ useDocker: false, debug: false });
+  emulator = new Emulator({ debug: false });
   await emulator.start();
 });
 
@@ -308,79 +308,52 @@ test('query', async (t) => {
   t.is(key.id, entity.key.id);
 });
 
-// describe("Writing", () => {
-//   it("save / upsert", async () => {
-//     expect.assertions(2);
-//     const kvStore = getDstore("huwawi3Datastore");
-//     const entity = { key: kvStore.key(["testYodel", 3]), data: { foo: "bar" } };
-//     const result = await kvStore.save([entity]);
-//     // const result2 = await kvStore.upsert([entity]);
-//     expect(result?.[0]?.mutationResults?.[0]?.conflictDetected).toMatchInlineSnapshot(`false`);
-//     // expect(result).toMatchInlineSnapshot(`
-//     //   Array [
-//     //     Object {
-//     //       "indexUpdates": 3
-//     //       "mutationResults": Array [
-//     //         Object {
-//     //           "conflictDetected": false,
-//     //           "key": null,
-//     //           "version": "1234567890123456",
-//     //         },
-//     //       ],
-//     //     },
-//     //   ]
-//     // `);
-//     expect(entity.data[Datastore.KEY]).toMatchInlineSnapshot(`undefined`);
-//   });
+test('save / upsert', async (t) => {
+  // expect.assertions(2);
+  const kvStore = getDstore('test');
+  const entity = {
+    key: kvStore.key(['testYodel', 3]),
+    data: { foo: 'bar' } as any,
+  };
+  const result = await kvStore.save([entity]);
+  // const result2 = await kvStore.upsert([entity]);
+  t.is(result?.[0]?.mutationResults?.[0]?.conflictDetected, false);
+  t.deepEqual(entity.data._keyStr, 'agByDwsSCXRlc3RZb2RlbBgDDA');
+  t.deepEqual(entity.data.foo, 'bar');
+  t.deepEqual(entity.data[Datastore.KEY].kind, 'testYodel');
 
-//   it("update", async () => {
-//     expect.assertions(3);
-//     const kvStore = getDstore("huwawi3Datastore");
-//     const keyName = `4insert${Math.random()}`;
-//     const entity = { key: kvStore.key(["testYodel", keyName]), data: { foo: "bar" } };
+  //   Array [
+  //     Object {
+  //       "indexUpdates": 3
+  //       "mutationResults": Array [
+  //         Object {
+  //           "conflictDetected": false,
+  //           "key": null,
+  //           "version": "1234567890123456",
+  //         },
+  //       ],
+  //     },
+  //   ]
+  // `);
+});
 
-//     // const request = kvStore.update([entity]);
-//     // await expect(request).rejects.toThrowError(Error);
+test('update', async (t) => {
+  //     expect.assertions(3);
+  const kvStore = getDstore('test');
+  const keyName = `4insert${Math.random()}`;
+  const entity = {
+    key: kvStore.key(['testYodel', keyName]),
+    data: { foo: 'bar' },
+  };
+  // const request = kvStore.update([entity]);
+  // await expect(request).rejects.toThrowError(Error);
 
-//     const commitResponse = await kvStore.save([entity]);
-//     // @ts-expect-error
-//     commitResponse[0].mutationResults[0].version = 2;
-//     expect(commitResponse?.[0]).toMatchInlineSnapshot(
-//       { indexUpdates: expect.any(Number) },
-//       `
-//       Object {
-//         "indexUpdates": Any<Number>,
-//         "mutationResults": Array [
-//           Object {
-//             "conflictDetected": false,
-//             "key": null,
-//             "version": 2,
-//           },
-//         ],
-//       }
-//     `
-//     );
-//     const commitResponse2 = await kvStore.update([entity]);
-//     if (commitResponse2?.[0]?.mutationResults?.[0]?.version) {
-//       commitResponse2[0].mutationResults[0].version = 2;
-//     }
-//     expect(commitResponse2).toMatchInlineSnapshot(`
-//       Array [
-//         Object {
-//           "indexUpdates": 0,
-//           "mutationResults": Array [
-//             Object {
-//               "conflictDetected": false,
-//               "key": null,
-//               "version": 2,
-//             },
-//           ],
-//         },
-//       ]
-//     `);
-
-//     expect(entity.data[Datastore.KEY]).toMatchInlineSnapshot(`undefined`);
-//   });
+  await kvStore.save([entity]);
+  const result = await kvStore.update([entity]);
+  t.is(result?.[0]?.mutationResults?.[0]?.conflictDetected, false);
+  t.is(result?.[0]?.mutationResults?.[0]?.key, null);
+  t.is(result?.[0]?.indexUpdates, 2);
+});
 
 //   it("insert", async () => {
 //     expect.assertions(4);
@@ -464,10 +437,10 @@ test('query', async (t) => {
 //   });
 // });
 
-// describe("Exceptions", () => {
-//   it("simple", async () => {
+// describe('Exceptions', () => {
+//   it('simple', async () => {
 //     const t = () => {
-//       throw new DstoreError("bla", undefined);
+//       throw new DstoreError('bla', undefined);
 //     };
 //     expect(t).toThrow(DstoreError);
 //   });

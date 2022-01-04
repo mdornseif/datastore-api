@@ -98,7 +98,11 @@ export interface IDstoreEntry extends IDstoreEntryWithoutKey {
 /** Represents the thing you pass to the save method. Also called "Entity" by Google */
 export type DstoreSaveEntity = {
   key: Key;
-  data: Omit<IDstoreEntry, '_keyStr' | Datastore['KEY']>;
+  data: Omit<IDstoreEntry, '_keyStr' | Datastore['KEY']> &
+    Partial<{
+      _keyStr: string;
+      [Datastore.KEY]: Key;
+    }>;
   method?: 'insert' | 'update' | 'upsert';
   excludeLargeProperties?: boolean;
   excludeFromIndexes?: readonly string[];
@@ -366,7 +370,7 @@ export class Dstore implements IDstore {
    *
    * If the Datastore generates a new ID because of an incomplete [[Key]] *on first save* it will return an large integer as [[Key.id]].
    * On every subsequent `save()` an string encoded number representation is returned.
-   * Dstore normalizes that and always returns an string encoded number representation.
+   * @todo Dstore should normalizes that and always return an string encoded number representation.
    *
    * Each [[DstoreSaveEntity]] can have an `excludeFromIndexes` property which is somewhat underdocumented.
    * It can use something like JSON-Path notation
@@ -400,7 +404,12 @@ export class Dstore implements IDstore {
             ? true
             : e.excludeLargeProperties;
       }
-      return (await this.getDoT().save(entities)) || undefined;
+      const ret = (await this.getDoT().save(entities)) || undefined;
+      for (const e of entities) {
+        e.data[Datastore.KEY] = e.key;
+        this.fixKeys([e.data]);
+      }
+      return ret;
     } catch (error) {
       throw process.env.NODE_ENV === 'test'
         ? error
@@ -417,6 +426,8 @@ export class Dstore implements IDstore {
    * `insert()` seems to be like [[save]] where [[DstoreSaveEntity.method]] is set to `'insert'`. It throws an [[DstoreError]] if there is already a Entity with the same [[Key]] in the Datastore.
    *
    * For handling of incomplete [[Key]]s see [[save]].
+   *
+   * This function can be completely emulated by using [[save]] with `method: 'insert'` inside each [[DstoreSaveEntity]].
    *
    * @throws [[DstoreError]]
    * @category Datastore Drop-In
@@ -445,7 +456,9 @@ export class Dstore implements IDstore {
    * It throws an [[DstoreError]] if there is no Entity with the same [[Key]] in the Datastore. `update()` *overwrites all existing data* for that [[Key]].
    * There was an alpha functionality called `merge()` in the Datastore which read an Entity, merged it with the new data and wrote it back, but this was never documented.
    *
-   * `update()` is idempotent. Deleting the same [[Key]] twice is no error.
+   * `update()` is idempotent. Updating the same [[Key]] twice is no error.
+   *
+   * This function can be completely emulated by using [[save]] with `method: 'update'` inside each [[DstoreSaveEntity]].
    *
    * @throws [[DstoreError]]
    * @category Datastore Drop-In
@@ -464,9 +477,9 @@ export class Dstore implements IDstore {
     }
   }
 
-  /** `delete()` is compatible to [Datastore.update()].
+  /** `delete()` is compatible to [Datastore.delete()].
    *
-   * Unfortunately currently (late 2021) there is no formal documentation from Google on [Datastore.update()].
+   * Unfortunately currently (late 2021) there is no formal documentation from Google on [Datastore.delete()].
    *
    * The single Parameter is a list of [[Key]]s.
    * If called within a transaction it returns `undefined`.
@@ -577,8 +590,6 @@ export class Dstore implements IDstore {
 
   /** This tries to give high level access to transactions.
 
-    Be aware that Transactions differ considerable between Master-Slave Datastore (very old), High Replication Datastore (old, later called [Google Cloud Datastore](https://cloud.google.com/datastore/docs/concepts/cloud-datastore-transactions)) and [Firestore in Datastore Mode](https://cloud.google.com/datastore/docs/firestore-or-datastore#in_datastore_mode) (current).
-
     So called "Gross Group Transactions" are always enabled. Transactions are never Cross Project. `runInTransaction()` works only if you use the same [[KvStore] instance for all access within the Transaction.
 
     [[runInTransaction]] is modelled after Python 2.7 [ndb's `@ndb.transactional` feature](https://cloud.google.com/appengine/docs/standard/python/ndb/transactions). This is based on node's [AsyncLocalStorage](https://nodejs.org/docs/latest-v14.x/api/async_hooks.html).
@@ -586,7 +597,11 @@ export class Dstore implements IDstore {
     Transactions frequently fail if you try to access the same data via in a transaction. See the [Documentation on Locking](https://cloud.google.com/datastore/docs/concepts/transactions#transaction_locks) for further reference. You are advised to use [p-limit](https://github.com/sindresorhus/p-limit)(1) to serialize transactions touching the same resource. This should work nicely with node's single process model. It is a much bigger problem on shared-nothing approaches, like Python on App Engine.
 
     Transactions might be wrapped in [p-retry](https://github.com/sindresorhus/p-retry) to implement automatically retrying them with exponential back-off should they fail due to contention.
-   */
+
+    Be aware that Transactions differ considerable between Master-Slave Datastore (very old), High Replication Datastore (old, later called [Google Cloud Datastore](https://cloud.google.com/datastore/docs/concepts/cloud-datastore-transactions)) and [Firestore in Datastore Mode](https://cloud.google.com/datastore/docs/firestore-or-datastore#in_datastore_mode) (current).
+
+    Most Applications today are running on "Firestore in Datastore Mode". Beware that the Datastore-Emulator fails with `error: 3 INVALID_ARGUMENT: Only ancestor queries are allowed inside transactions.` during [[runQuery]] while the Datastore on Google Infrastructure does not have such an restriction anymore as of 2022.
+    */
   async runInTransaction<T>(func: () => Promise<T>): Promise<T> {
     let ret;
     const transaction: Transaction = this.datastore.transaction();
