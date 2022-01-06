@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/mdornseif/datastore-api/compare/v1.4.0...v1.5.0) (2022-01-06)
+
+
+### Features
+
+* provide  _keyStr also in queries ([fe7e90b](https://github.com/mdornseif/datastore-api/commit/fe7e90b3011e08de552e1b4e35b1ad110efa6b1b))
+
 ## [1.4.0](https://github.com/mdornseif/datastore-api/compare/v1.3.0...v1.4.0) (2022-01-04)
 
 

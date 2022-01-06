@@ -1,6 +1,6 @@
 {
   "name": "datastore-api",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Simplified, more consitent API for Google Cloud Datastore",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
