@@ -225,59 +225,17 @@ test('allocation', async (t) => {
 //     expect(result6).toMatchInlineSnapshot(`Array []`);
 //   });
 
-//   it("get name", async () => {
-//     expect.assertions(3);
-//     const kvStore = getDstore("huwawi3Datastore");
-//     const entity = { key: kvStore.key(["testYodel", "two"]), data: { foo: "bar" } };
-//     const commitResponse = await kvStore.save([entity]);
-//     expect(commitResponse?.[0]?.indexUpdates).toBe(3);
-//     // expect(commitResponse).toMatchInlineSnapshot(`
-//     //   Array [
-//     //     Object {
-//     //       "indexUpdates": 0,
-//     //       "mutationResults": Array [
-//     //         Object {
-//     //           "conflictDetected": false,
-//     //           "key": null,
-//     //           "version": "1234567890123456",
-//     //         },
-//     //       ],
-//     //     },
-//     //   ]
-//     // `);
-//     expect(entity).toMatchInlineSnapshot(`
-//       Object {
-//         "data": Object {
-//           "foo": "bar",
-//         },
-//         "key": Key {
-//           "kind": "testYodel",
-//           "name": "two",
-//           "namespace": "test",
-//           "path": Array [
-//             "testYodel",
-//             "two",
-//           ],
-//         },
-//       }
-//     `);
-//     const result = await kvStore.get(entity.key);
-//     expect(result).toMatchInlineSnapshot(`
-//       Object {
-//         "_keyStr": "agdodXdhd2kzchMLEgl0ZXN0WW9kZWwiBHp3ZWkMogEEdGVzdA",
-//         "foo": "bar",
-//         Symbol(KEY): Key {
-//           "kind": "testYodel",
-//           "name": "two",
-//           "namespace": "test",
-//           "path": Array [
-//             "testYodel",
-//             "two",
-//           ],
-//         },
-//       }
-//     `);
-//   });
+test('get name', async (t) => {
+  const kvStore = getDstore('test');
+  const entity = {
+    key: kvStore.key(['testYodel', 'two']),
+    data: { foo: 'bar' },
+  };
+  await kvStore.save([entity]);
+  const result = await kvStore.get(entity.key);
+  t.is(result?._keyStr, 'agByEgsSCXRlc3RZb2RlbCIDdHdvDA');
+  t.is(result?.foo, 'bar');
+});
 
 test('query', async (t) => {
   const kvStore = getDstore('test');
@@ -286,7 +244,6 @@ test('query', async (t) => {
     data: { foo: 'bar', baz: 'baz' },
   };
 
-  // legacy interface
   await kvStore.save([entity]);
   const query = kvStore.createQuery('testYodel');
   query.limit(1);
@@ -295,12 +252,14 @@ test('query', async (t) => {
   t.is(entities?.[0]?.foo, 'bar');
   t.is(entities?.[0]?.[Datastore.KEY]?.kind, 'testYodel');
   t.is(runQueryInfo?.moreResults, 'MORE_RESULTS_AFTER_LIMIT');
+  t.is(entities?.[0]?._keyStr, 'agByDwsSCXRlc3RZb2RlbBgDDA');
 
   // modern interface
   const [result2] = await kvStore.query('testYodel', [], 1, [], ['baz']);
   t.is(result2.length, 1);
   // foo is removed by selection
   t.deepEqual(JSON.parse(JSON.stringify(result2?.[0])), {
+    _keyStr: 'agByEAsSCXRlc3RZb2RlbCIBMww',
     baz: 'baz',
   });
 
@@ -321,20 +280,6 @@ test('save / upsert', async (t) => {
   t.deepEqual(entity.data._keyStr, 'agByDwsSCXRlc3RZb2RlbBgDDA');
   t.deepEqual(entity.data.foo, 'bar');
   t.deepEqual(entity.data[Datastore.KEY].kind, 'testYodel');
-
-  //   Array [
-  //     Object {
-  //       "indexUpdates": 3
-  //       "mutationResults": Array [
-  //         Object {
-  //           "conflictDetected": false,
-  //           "key": null,
-  //           "version": "1234567890123456",
-  //         },
-  //       ],
-  //     },
-  //   ]
-  // `);
 });
 
 test('update', async (t) => {

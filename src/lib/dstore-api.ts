@@ -18,9 +18,10 @@ import {
   Query,
   Transaction,
 } from '@google-cloud/datastore';
-import { entity } from '@google-cloud/datastore/build/src/entity';
+import { Entity, entity } from '@google-cloud/datastore/build/src/entity';
 import {
   Operator,
+  RunQueryInfo,
   RunQueryResponse,
 } from '@google-cloud/datastore/build/src/query';
 import { CommitResponse } from '@google-cloud/datastore/build/src/request';
@@ -83,8 +84,7 @@ export interface IDstoreEntryWithoutKey {
 }
 
 /** Represents what is actually stored inside the Datastore, called "Entity" by Google
-    [@google-cloud/datastore](https://github.com/googleapis/nodejs-datastore#readme) adds `[Datastore.KEY]`. Using ES6 Symbols presents all kinds of hurdles, especially when you try to serialize into a cache. So we add the property _keyStr which contains the encoded code. It is automatically used
-    to reconstruct `[Datastore.KEY]`, if you use [[Dstore.readKey]].
+    [@google-cloud/datastore](https://github.com/googleapis/nodejs-datastore#readme) adds `[Datastore.KEY]`. Using ES6 Symbols presents all kinds of hurdles, especially when you try to serialize into a cache. So we add the property _keyStr which contains the encoded key. It is automatically used to reconstruct `[Datastore.KEY]`, if you use [[Dstore.readKey]].
 */
 export interface IDstoreEntry extends IDstoreEntryWithoutKey {
   /* Datastore key provided by [@google-cloud/datastore](https://github.com/googleapis/nodejs-datastore#readme) */
@@ -521,7 +521,9 @@ export class Dstore implements IDstore {
 
   async runQuery(query: Query | Omit<Query, 'run'>): Promise<RunQueryResponse> {
     try {
-      return await this.getDoT().runQuery(query as Query);
+      const [entities, info]: [Entity[], RunQueryInfo] =
+        await this.getDoT().runQuery(query as Query);
+      return [this.fixKeys(entities), info];
     } catch (error) {
       throw new DstoreError('datastore.runQuery error', error);
       // console.error(error)
