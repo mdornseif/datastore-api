@@ -293,6 +293,10 @@ export class Dstore implements IDstore {
   async get(key: Key): Promise<IDstoreEntry | null> {
     assertIsObject(key);
     assert(!Array.isArray(key));
+    assert(
+      key.path.length % 2 == 0,
+      `key.path must be complete: ${JSON.stringify(key.path)}`
+    );
     const result = await this.getMulti([key]);
     return result?.[0] || null;
   }
@@ -467,6 +471,18 @@ export class Dstore implements IDstore {
     entities: readonly DstoreSaveEntity[]
   ): Promise<CommitResponse | undefined> {
     assertIsArray(entities);
+
+    entities.forEach((entity) => assertIsObject(entity.key));
+    entities.forEach((entity) =>
+      assert(
+        entity.key.path.length % 2 == 0,
+        `entity.key.path must be complete: ${JSON.stringify([
+          entity.key.path,
+          entity,
+        ])}`
+      )
+    );
+
     try {
       return (await this.getDoT().update(entities)) || undefined;
     } catch (error) {
@@ -493,6 +509,12 @@ export class Dstore implements IDstore {
   async delete(keys: readonly Key[]): Promise<CommitResponse | undefined> {
     assertIsArray(keys);
     keys.forEach((key) => assertIsObject(key));
+    keys.forEach((key) =>
+      assert(
+        key.path.length % 2 == 0,
+        `key.path must be complete: ${JSON.stringify(key.path)}`
+      )
+    );
     try {
       return (await this.getDoT().delete(keys)) || undefined;
     } catch (error) {
