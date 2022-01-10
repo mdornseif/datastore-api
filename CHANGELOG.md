@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.0](https://github.com/mdornseif/datastore-api/compare/v1.5.0...v1.6.0) (2022-01-10)
+
+
+### Features
+
+* catch incomplete keys before trying to update the datastore ([1132e3b](https://github.com/mdornseif/datastore-api/commit/1132e3b52913d83b189c7bf94101c6df162f87df))
+
 ## [1.5.0](https://github.com/mdornseif/datastore-api/compare/v1.4.0...v1.5.0) (2022-01-06)
 
 
