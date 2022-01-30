@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.7.0](https://github.com/mdornseif/datastore-api/compare/v1.6.0...v1.7.0) (2022-01-30)
+
+
+### Features
+
+* use prop-client to collect datastore metrics ([e55ff06](https://github.com/mdornseif/datastore-api/commit/e55ff06c8e069ca0df798c1e1f34c2eb9bf9079b))
+
 ## [1.6.0](https://github.com/mdornseif/datastore-api/compare/v1.5.0...v1.6.0) (2022-01-10)
 
 
