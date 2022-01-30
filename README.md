@@ -28,6 +28,25 @@ Find the full documentation [here](http://mdornseif.io/datastore-api/classes/Dst
 
 See [the API documentation](http://mdornseif.io/datastore-api/classes/Dstore.html) for Details, [Github](https://github.com/mdornseif/datastore-api) for source.
 
+## Metrics
+
+Datastore-API is instrumented with [prom-client](https://github.com/siimon/prom-client). Metrics are all prefixed with `dstore_`.
+
+In an express based Application you can make them available like this:
+
+```js
+import promClient from 'prom-client';
+
+server.get('/metrics', async (req, res) => {
+  try {
+    res.set('Content-Type', promClient.register.contentType);
+    res.end(await promClient.register.metrics());
+  } catch (ex) {
+    res.status(500).end(ex);
+  }
+});
+```
+
 ## See also
 
 - Google Documentation

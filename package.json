@@ -46,7 +46,8 @@
   },
   "dependencies": {
     "assertate": "^2.4.0",
-    "google-datastore-emulator": "^5.1.0"
+    "google-datastore-emulator": "^5.1.0",
+    "prom-client": "^14.0.1"
   },
   "devDependencies": {
     "@ava/typescript": "^1.1.1",

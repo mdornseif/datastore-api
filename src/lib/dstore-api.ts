@@ -34,6 +34,7 @@ import {
   assertIsString,
 } from 'assertate';
 import Debug from 'debug';
+import promClient from 'prom-client';
 import { Writable } from 'ts-essentials';
 
 /** @ignore */
@@ -49,13 +50,34 @@ export {
 const debug = Debug('ds:api');
 
 /** @ignore */
+const transactionAsyncLocalStorage = new AsyncLocalStorage();
 
+/** @ignore */
+const metricGetHistogram = new promClient.Histogram({
+  name: 'dstore_get_duration_seconds',
+  help: 'How long did Datastore gets take?',
+  labelNames: ['kindName'],
+});
+/** @ignore */
+const metricSaveHistogram = new promClient.Histogram({
+  name: 'dstore_save_duration_seconds',
+  help: 'How long did Datastore saves(insert/update/upsert) take?',
+});
+/** @ignore */
+const metricDeleteHistogram = new promClient.Histogram({
+  name: 'dstore_delete_duration_seconds',
+  help: 'How long did Datastore delete take?',
+});
+/** @ignore */
+const metricQueryHistogram = new promClient.Histogram({
+  name: 'dstore_query_duration_seconds',
+  help: 'How long did Datastore queries take?',
+  labelNames: ['kindName'],
+});
 /** Use instead of Datastore.KEY
  *
  * Even better: use `_key` instead.
  */
-const transactionAsyncLocalStorage = new AsyncLocalStorage();
-
 export const KEYSYM = Datastore.KEY;
 
 export type IGqlFilterTypes = boolean | string | number;
@@ -291,6 +313,7 @@ export class Dstore implements IDstore {
    * @category Datastore Drop-In
    */
   async get(key: Key): Promise<IDstoreEntry | null> {
+    const metricEnd = metricGetHistogram.startTimer();
     assertIsObject(key);
     assert(!Array.isArray(key));
     assert(
@@ -298,6 +321,7 @@ export class Dstore implements IDstore {
       `key.path must be complete: ${JSON.stringify(key.path)}`
     );
     const result = await this.getMulti([key]);
+    metricEnd({ kindName: key.kind });
     return result?.[0] || null;
   }
 
@@ -397,6 +421,7 @@ export class Dstore implements IDstore {
   ): Promise<CommitResponse | undefined> {
     assertIsArray(entities);
     try {
+      const metricEnd = metricSaveHistogram.startTimer();
       // Within Transaction we don't get any answer here!
       // [ { mutationResults: [ [Object], [Object] ], indexUpdates: 51 } ]
       for (const e of entities) {
@@ -413,6 +438,7 @@ export class Dstore implements IDstore {
         e.data[Datastore.KEY] = e.key;
         this.fixKeys([e.data]);
       }
+      metricEnd();
       return ret;
     } catch (error) {
       throw process.env.NODE_ENV === 'test'
@@ -441,7 +467,10 @@ export class Dstore implements IDstore {
   ): Promise<CommitResponse | undefined> {
     assertIsArray(entities);
     try {
-      return (await this.getDoT().insert(entities)) || undefined;
+      const metricEnd = metricSaveHistogram.startTimer();
+      const ret = (await this.getDoT().insert(entities)) || undefined;
+      metricEnd();
+      return ret;
     } catch (error) {
       // console.error(error)
       throw process.env.NODE_ENV === 'test'
@@ -484,7 +513,10 @@ export class Dstore implements IDstore {
     );
 
     try {
-      return (await this.getDoT().update(entities)) || undefined;
+      const metricEnd = metricSaveHistogram.startTimer();
+      const ret = (await this.getDoT().update(entities)) || undefined;
+      metricEnd();
+      return ret;
     } catch (error) {
       // console.error(error)
       throw process.env.NODE_ENV === 'test'
@@ -516,7 +548,10 @@ export class Dstore implements IDstore {
       )
     );
     try {
-      return (await this.getDoT().delete(keys)) || undefined;
+      const metricEnd = metricDeleteHistogram.startTimer();
+      const ret = (await this.getDoT().delete(keys)) || undefined;
+      metricEnd();
+      return ret;
     } catch (error) {
       // console.error(error)
       throw process.env.NODE_ENV === 'test'
@@ -543,8 +578,11 @@ export class Dstore implements IDstore {
 
   async runQuery(query: Query | Omit<Query, 'run'>): Promise<RunQueryResponse> {
     try {
+      const metricEnd = metricQueryHistogram.startTimer();
       const [entities, info]: [Entity[], RunQueryInfo] =
         await this.getDoT().runQuery(query as Query);
+      metricEnd();
+
       return [this.fixKeys(entities), info];
     } catch (error) {
       throw new DstoreError('datastore.runQuery error', error);
