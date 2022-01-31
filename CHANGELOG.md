@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.1](https://github.com/mdornseif/datastore-api/compare/v1.7.0...v1.7.1) (2022-01-31)
+
+
+### Bug Fixes
+
+* Prometheus metric names ([551c6fa](https://github.com/mdornseif/datastore-api/commit/551c6fad3cfea10f1a452cf12083a91848468510))
+
 ## [1.7.0](https://github.com/mdornseif/datastore-api/compare/v1.6.0...v1.7.0) (2022-01-30)
 
 
