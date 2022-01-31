@@ -300,45 +300,22 @@ test('update', async (t) => {
   t.is(result?.[0]?.indexUpdates, 2);
 });
 
-//   it("insert", async () => {
-//     expect.assertions(4);
-//     const kvStore = getDstore("huwawi3Datastore");
-//     const keyName = `3insert${Math.random()}`;
-//     const entity = { key: kvStore.key(["testYodel", keyName]), data: { foo: "bar" } };
-//     const commitResponse = await kvStore.insert([entity]);
-//     if (commitResponse?.[0]?.mutationResults?.[0]?.version) {
-//       commitResponse[0].mutationResults[0].version = 2;
-//     }
-//     expect(commitResponse?.[0]).toMatchInlineSnapshot(
-//       { indexUpdates: expect.any(Number) },
-//       `
-//       Object {
-//         "indexUpdates": Any<Number>,
-//         "mutationResults": Array [
-//           Object {
-//             "conflictDetected": false,
-//             "key": null,
-//             "version": 2,
-//           },
-//         ],
-//       }
-//     `
-//     );
-//     expect(entity.key.name).toMatch(keyName);
-//     expect(entity.key.kind).toMatchInlineSnapshot(`"testYodel"`);
-
-//     const request = kvStore.insert([entity]);
-//     await expect(request).rejects.toThrowError(Error);
-//     // 6 ALREADY_EXISTS: entity already exists: app: "h~huwawi3"
-//     // name_space: "test"
-//     // path <
-//     //   Element {
-//     //     type: "testYodel"
-//     //     id: 5
-//     //   }
-//     // >
-//   });
-// });
+test('insert / delete', async (t) => {
+  // expect.assertions(2);
+  const kvStore = getDstore('test');
+  const entity = {
+    key: kvStore.key(['testYodel', 4]),
+    data: { foo: 'bar' } as any,
+  };
+  const result = await kvStore.insert([entity]);
+  t.is(result?.[0]?.mutationResults?.[0]?.conflictDetected, false);
+  t.is(result?.[0]?.indexUpdates, 3);
+  // t.is(result?.[0]?.mutationResults?.[0]?.version, '4'); sometimes 4 sometimes 5, sometimes 3
+  t.deepEqual(entity.data.foo, 'bar');
+  t.deepEqual(entity.key.path, ['testYodel', 4]);
+  const result2 = await kvStore.delete([entity.key]);
+  t.is(result2?.[0]?.mutationResults?.[0]?.conflictDetected, false);
+});
 
 // describe("Transactions", () => {
 //   it("simple", async () => {

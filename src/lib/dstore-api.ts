@@ -53,27 +53,17 @@ const debug = Debug('ds:api');
 const transactionAsyncLocalStorage = new AsyncLocalStorage();
 
 /** @ignore */
-const metricGetHistogram = new promClient.Histogram({
-  name: 'dstore_get_duration_seconds',
-  help: 'How long did Datastore gets take?',
-  labelNames: ['kindName'],
+const metricHistogram = new promClient.Histogram({
+  name: 'dstore_requests_seconds',
+  help: 'How long did Datastore operations take?',
+  labelNames: ['operation', 'kindName'],
 });
-/** @ignore */
-const metricSaveHistogram = new promClient.Histogram({
-  name: 'dstore_save_duration_seconds',
-  help: 'How long did Datastore saves(insert/update/upsert) take?',
+const metricFailureCounter = new promClient.Counter({
+  name: 'dstore_failures_total',
+  help: 'How many Datastore operations failed?',
+  labelNames: ['operation'],
 });
-/** @ignore */
-const metricDeleteHistogram = new promClient.Histogram({
-  name: 'dstore_delete_duration_seconds',
-  help: 'How long did Datastore delete take?',
-});
-/** @ignore */
-const metricQueryHistogram = new promClient.Histogram({
-  name: 'dstore_query_duration_seconds',
-  help: 'How long did Datastore queries take?',
-  labelNames: ['kindName'],
-});
+
 /** Use instead of Datastore.KEY
  *
  * Even better: use `_key` instead.
@@ -313,7 +303,6 @@ export class Dstore implements IDstore {
    * @category Datastore Drop-In
    */
   async get(key: Key): Promise<IDstoreEntry | null> {
-    const metricEnd = metricGetHistogram.startTimer();
     assertIsObject(key);
     assert(!Array.isArray(key));
     assert(
@@ -321,7 +310,6 @@ export class Dstore implements IDstore {
       `key.path must be complete: ${JSON.stringify(key.path)}`
     );
     const result = await this.getMulti([key]);
-    metricEnd({ kindName: key.kind });
     return result?.[0] || null;
   }
 
@@ -345,18 +333,24 @@ export class Dstore implements IDstore {
     keys: readonly Key[]
   ): Promise<Array<IDstoreEntry | undefined>> {
     // assertIsArray(keys);
+    let ret: IDstoreEntry[];
+    const metricEnd = metricHistogram.startTimer();
     try {
-      return this.fixKeys(
+      ret = this.fixKeys(
         keys.length > 0
           ? (await this.getDoT().get(keys as Writable<typeof keys>))?.[0]
           : []
       );
     } catch (error) {
       // console.error(error)
+      metricFailureCounter.inc({ operation: 'get' });
       throw process.env.NODE_ENV === 'test'
         ? error
         : new DstoreError('datastore.getMulti error', error, { keys });
+    } finally {
+      metricEnd({ kindName: keys?.[0]?.kind, operation: 'get' });
     }
+    return ret;
   }
 
   /** `set()` is addition to [[Datastore]]. It provides a classic Key-value Interface.
@@ -420,8 +414,9 @@ export class Dstore implements IDstore {
     entities: readonly DstoreSaveEntity[]
   ): Promise<CommitResponse | undefined> {
     assertIsArray(entities);
+    let ret: CommitResponse;
+    const metricEnd = metricHistogram.startTimer();
     try {
-      const metricEnd = metricSaveHistogram.startTimer();
       // Within Transaction we don't get any answer here!
       // [ { mutationResults: [ [Object], [Object] ], indexUpdates: 51 } ]
       for (const e of entities) {
@@ -433,18 +428,20 @@ export class Dstore implements IDstore {
             ? true
             : e.excludeLargeProperties;
       }
-      const ret = (await this.getDoT().save(entities)) || undefined;
+      ret = (await this.getDoT().save(entities)) || undefined;
       for (const e of entities) {
         e.data[Datastore.KEY] = e.key;
         this.fixKeys([e.data]);
       }
-      metricEnd();
-      return ret;
     } catch (error) {
+      metricFailureCounter.inc({ operation: 'save' });
       throw process.env.NODE_ENV === 'test'
         ? error
         : new DstoreError('datastore.save error', error);
+    } finally {
+      metricEnd({ operation: 'save' });
     }
+    return ret;
   }
 
   /** `insert()` is compatible to [Datastore.insert()](https://cloud.google.com/nodejs/docs/reference/datastore/latest/datastore/datastore#_google_cloud_datastore_Datastore_insert_member_1_).
@@ -466,17 +463,20 @@ export class Dstore implements IDstore {
     entities: readonly DstoreSaveEntity[]
   ): Promise<CommitResponse | undefined> {
     assertIsArray(entities);
+    let ret: CommitResponse;
+    const metricEnd = metricHistogram.startTimer();
     try {
-      const metricEnd = metricSaveHistogram.startTimer();
-      const ret = (await this.getDoT().insert(entities)) || undefined;
-      metricEnd();
-      return ret;
+      ret = (await this.getDoT().insert(entities)) || undefined;
     } catch (error) {
       // console.error(error)
+      metricFailureCounter.inc({ operation: 'insert' });
       throw process.env.NODE_ENV === 'test'
         ? error
         : new DstoreError('datastore.insert error', error);
+    } finally {
+      metricEnd({ operation: 'insert' });
     }
+    return ret;
   }
 
   /** `update()` is compatible to [Datastore.update()](https://cloud.google.com/nodejs/docs/reference/datastore/latest/datastore/datastore#_google_cloud_datastore_Datastore_update_member_1_).
@@ -511,18 +511,21 @@ export class Dstore implements IDstore {
         ])}`
       )
     );
+    let ret: CommitResponse;
+    const metricEnd = metricHistogram.startTimer();
 
     try {
-      const metricEnd = metricSaveHistogram.startTimer();
-      const ret = (await this.getDoT().update(entities)) || undefined;
-      metricEnd();
-      return ret;
+      ret = (await this.getDoT().update(entities)) || undefined;
     } catch (error) {
       // console.error(error)
+      metricFailureCounter.inc({ operation: 'update' });
       throw process.env.NODE_ENV === 'test'
         ? error
         : new DstoreError('datastore.update error', error);
+    } finally {
+      metricEnd({ operation: 'update' });
     }
+    return ret;
   }
 
   /** `delete()` is compatible to [Datastore.delete()].
@@ -547,17 +550,20 @@ export class Dstore implements IDstore {
         `key.path must be complete: ${JSON.stringify(key.path)}`
       )
     );
+    let ret;
+    const metricEnd = metricHistogram.startTimer();
     try {
-      const metricEnd = metricDeleteHistogram.startTimer();
-      const ret = (await this.getDoT().delete(keys)) || undefined;
-      metricEnd();
-      return ret;
+      ret = (await this.getDoT().delete(keys)) || undefined;
     } catch (error) {
       // console.error(error)
+      metricFailureCounter.inc({ operation: 'delete' });
       throw process.env.NODE_ENV === 'test'
         ? error
         : new DstoreError('datastore.delete error', error);
+    } finally {
+      metricEnd({ operation: 'delete' });
     }
+    return ret;
   }
 
   /** `createQuery()` creates an "empty" [[Query]] Object.
@@ -577,18 +583,20 @@ export class Dstore implements IDstore {
   }
 
   async runQuery(query: Query | Omit<Query, 'run'>): Promise<RunQueryResponse> {
+    let ret;
+    const metricEnd = metricHistogram.startTimer();
     try {
-      const metricEnd = metricQueryHistogram.startTimer();
       const [entities, info]: [Entity[], RunQueryInfo] =
         await this.getDoT().runQuery(query as Query);
-      metricEnd();
-
-      return [this.fixKeys(entities), info];
+      ret = [this.fixKeys(entities), info];
     } catch (error) {
       throw new DstoreError('datastore.runQuery error', error);
       // console.error(error)
       // throw process.env.NODE_ENV === 'test' ? error : new KvStoreError('datastore.runQuery error', error)
+    } finally {
+      metricEnd({ operation: 'query' });
     }
+    return ret;
   }
 
   async query(
