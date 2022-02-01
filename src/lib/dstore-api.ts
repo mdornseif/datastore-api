@@ -439,7 +439,7 @@ export class Dstore implements IDstore {
         ? error
         : new DstoreError('datastore.save error', error);
     } finally {
-      metricEnd({ operation: 'save' });
+      metricEnd({ kindName: entities?.[0]?.key?.kind, operation: 'save' });
     }
     return ret;
   }
@@ -474,7 +474,7 @@ export class Dstore implements IDstore {
         ? error
         : new DstoreError('datastore.insert error', error);
     } finally {
-      metricEnd({ operation: 'insert' });
+      metricEnd({ kindName: entities?.[0]?.key?.kind, operation: 'insert' });
     }
     return ret;
   }
@@ -523,7 +523,7 @@ export class Dstore implements IDstore {
         ? error
         : new DstoreError('datastore.update error', error);
     } finally {
-      metricEnd({ operation: 'update' });
+      metricEnd({ kindName: entities?.[0]?.key?.kind, operation: 'update' });
     }
     return ret;
   }
@@ -561,7 +561,7 @@ export class Dstore implements IDstore {
         ? error
         : new DstoreError('datastore.delete error', error);
     } finally {
-      metricEnd({ operation: 'delete' });
+      metricEnd({ kindName: keys?.[0]?.kind, operation: 'delete' });
     }
     return ret;
   }
@@ -594,7 +594,7 @@ export class Dstore implements IDstore {
       // console.error(error)
       // throw process.env.NODE_ENV === 'test' ? error : new KvStoreError('datastore.runQuery error', error)
     } finally {
-      metricEnd({ operation: 'query' });
+      metricEnd({ kindName: query?.kinds?.[0], operation: 'query' });
     }
     return ret;
   }
