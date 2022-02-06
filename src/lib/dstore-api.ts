@@ -10,6 +10,7 @@
  */
 
 import { AsyncLocalStorage } from 'async_hooks';
+import { setImmediate } from 'timers/promises';
 
 import {
   Datastore,
@@ -344,6 +345,7 @@ export class Dstore implements IDstore {
     } catch (error) {
       // console.error(error)
       metricFailureCounter.inc({ operation: 'get' });
+      await setImmediate();
       throw new DstoreError('datastore.getMulti error', error, { keys });
     } finally {
       metricEnd({ kindName: keys?.[0]?.kind, operation: 'get' });
@@ -433,6 +435,7 @@ export class Dstore implements IDstore {
       }
     } catch (error) {
       metricFailureCounter.inc({ operation: 'save' });
+      await setImmediate();
       throw new DstoreError('datastore.save error', error);
     } finally {
       metricEnd({ kindName: entities?.[0]?.key?.kind, operation: 'save' });
@@ -466,6 +469,7 @@ export class Dstore implements IDstore {
     } catch (error) {
       // console.error(error)
       metricFailureCounter.inc({ operation: 'insert' });
+      await setImmediate();
       throw new DstoreError('datastore.insert error', error);
     } finally {
       metricEnd({ kindName: entities?.[0]?.key?.kind, operation: 'insert' });
@@ -513,6 +517,7 @@ export class Dstore implements IDstore {
     } catch (error) {
       // console.error(error)
       metricFailureCounter.inc({ operation: 'update' });
+      await setImmediate();
       throw new DstoreError('datastore.update error', error);
     } finally {
       metricEnd({ kindName: entities?.[0]?.key?.kind, operation: 'update' });
@@ -549,6 +554,7 @@ export class Dstore implements IDstore {
     } catch (error) {
       // console.error(error)
       metricFailureCounter.inc({ operation: 'delete' });
+      await setImmediate();
       throw new DstoreError('datastore.delete error', error);
     } finally {
       metricEnd({ kindName: keys?.[0]?.kind, operation: 'delete' });
@@ -580,6 +586,7 @@ export class Dstore implements IDstore {
         await this.getDoT().runQuery(query as Query);
       ret = [this.fixKeys(entities), info];
     } catch (error) {
+      await setImmediate();
       throw new DstoreError('datastore.runQuery error', error);
     } finally {
       metricEnd({ kindName: query?.kinds?.[0], operation: 'query' });
@@ -614,7 +621,7 @@ export class Dstore implements IDstore {
       }
       return await this.runQuery(q);
     } catch (error) {
-      console.error(error, { kindName, filters, limit, ordering });
+      await setImmediate();
       throw new DstoreError('datastore.query error', error, {
         kindName,
         filters,
@@ -676,7 +683,7 @@ export class Dstore implements IDstore {
           rollbackInfo,
           error
         );
-        console.error(error);
+        await setImmediate();
         throw new DstoreError('datastore.transaction execution error', error);
       }
       try {
@@ -690,6 +697,7 @@ export class Dstore implements IDstore {
           error,
           ret
         );
+        await setImmediate();
         throw new DstoreError('datastore.transaction execution error', error);
       }
     });
@@ -701,10 +709,6 @@ export class DstoreError extends Error {
   public readonly extensions: Record<string, unknown>;
   public readonly originalError: Error | undefined;
   readonly [key: string]: unknown;
-  protected readonly stack_before_rethrow: string | undefined;
-  public readonly code: number | undefined;
-  protected readonly details: string | undefined;
-  protected readonly note: string | undefined;
 
   constructor(
     message: string,
@@ -720,20 +724,14 @@ export class DstoreError extends Error {
     // metadata: Metadata { internalRepr: Map(0) {}, options: {} },
     this.originalError = originalError;
     this.extensions = { ...extensions };
-    this.stack_before_rethrow = this.stack;
-    const message_lines = (this.message.match(/n/g) || []).length + 1;
     this.stack =
-      this.stack
-        .split('\n')
-        .slice(0, message_lines + 1)
-        .join('\n') +
+      (this.stack?.split('\n')[0] || '') +
       '\n' +
-      originalError.stack;
+      (originalError?.stack?.split('\n')?.slice(1, -1)?.join('\n') || '') +
+      '\n' +
+      (this.stack?.split('\n')?.slice(1, -1)?.join('\n') || '');
 
     // These are usually present on Datastore Errors
-    this.code = originalError['code'];
-    this.details = originalError['details'];
-    this.note = originalError['note'];
     // logger.error({ err: originalError, extensions }, message);
   }
 }

@@ -330,6 +330,17 @@ test('insert / delete', async (t) => {
   t.is(result2?.[0]?.mutationResults?.[0]?.conflictDetected, false);
 });
 
+test('exception', async (t) => {
+  // expect.assertions(2);
+  const kvStore = getDstore('test');
+  try {
+    const result = await kvStore.set(kvStore.key(['testYodel', NaN]), {
+      foo: 'bar',
+    });
+  } catch (e) {
+    t.regex(e.stack, /Dstore\.set/);
+  }
+});
 // describe("Transactions", () => {
 //   it("simple", async () => {
 //     expect.assertions(2);
