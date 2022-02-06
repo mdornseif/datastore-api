@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.2](https://github.com/mdornseif/datastore-api/compare/v1.7.1...v1.7.2) (2022-02-06)
+
+
+### Bug Fixes
+
+* Correctly pit kindName into metrics ([0da9d2c](https://github.com/mdornseif/datastore-api/commit/0da9d2ca2927c4c0dbb793bcc89b4742610a82e7))
+* Throw original errors & fix type of set(key, data) ([84a0cbd](https://github.com/mdornseif/datastore-api/commit/84a0cbda78119bc6bef7a710b5bf137fdea1f9cb))
+
 ### [1.7.1](https://github.com/mdornseif/datastore-api/compare/v1.7.0...v1.7.1) (2022-01-31)
 
 
