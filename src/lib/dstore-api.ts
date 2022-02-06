@@ -344,9 +344,7 @@ export class Dstore implements IDstore {
     } catch (error) {
       // console.error(error)
       metricFailureCounter.inc({ operation: 'get' });
-      throw process.env.NODE_ENV === 'test'
-        ? error
-        : new DstoreError('datastore.getMulti error', error, { keys });
+      throw new DstoreError('datastore.getMulti error', error, { keys });
     } finally {
       metricEnd({ kindName: keys?.[0]?.kind, operation: 'get' });
     }
@@ -369,7 +367,7 @@ export class Dstore implements IDstore {
    *
    * @category Additional
    */
-  async set(key: Key, data: IDstoreEntry): Promise<Key> {
+  async set(key: Key, data: IDstoreEntryWithoutKey): Promise<Key> {
     assertIsObject(key);
     assertIsObject(data);
     const saveEntity = { key, data };
@@ -435,9 +433,7 @@ export class Dstore implements IDstore {
       }
     } catch (error) {
       metricFailureCounter.inc({ operation: 'save' });
-      throw process.env.NODE_ENV === 'test'
-        ? error
-        : new DstoreError('datastore.save error', error);
+      throw new DstoreError('datastore.save error', error);
     } finally {
       metricEnd({ kindName: entities?.[0]?.key?.kind, operation: 'save' });
     }
@@ -470,9 +466,7 @@ export class Dstore implements IDstore {
     } catch (error) {
       // console.error(error)
       metricFailureCounter.inc({ operation: 'insert' });
-      throw process.env.NODE_ENV === 'test'
-        ? error
-        : new DstoreError('datastore.insert error', error);
+      throw new DstoreError('datastore.insert error', error);
     } finally {
       metricEnd({ kindName: entities?.[0]?.key?.kind, operation: 'insert' });
     }
@@ -519,9 +513,7 @@ export class Dstore implements IDstore {
     } catch (error) {
       // console.error(error)
       metricFailureCounter.inc({ operation: 'update' });
-      throw process.env.NODE_ENV === 'test'
-        ? error
-        : new DstoreError('datastore.update error', error);
+      throw new DstoreError('datastore.update error', error);
     } finally {
       metricEnd({ kindName: entities?.[0]?.key?.kind, operation: 'update' });
     }
@@ -557,9 +549,7 @@ export class Dstore implements IDstore {
     } catch (error) {
       // console.error(error)
       metricFailureCounter.inc({ operation: 'delete' });
-      throw process.env.NODE_ENV === 'test'
-        ? error
-        : new DstoreError('datastore.delete error', error);
+      throw new DstoreError('datastore.delete error', error);
     } finally {
       metricEnd({ kindName: keys?.[0]?.kind, operation: 'delete' });
     }
@@ -591,8 +581,6 @@ export class Dstore implements IDstore {
       ret = [this.fixKeys(entities), info];
     } catch (error) {
       throw new DstoreError('datastore.runQuery error', error);
-      // console.error(error)
-      // throw process.env.NODE_ENV === 'test' ? error : new KvStoreError('datastore.runQuery error', error)
     } finally {
       metricEnd({ kindName: query?.kinds?.[0], operation: 'query' });
     }
@@ -627,14 +615,12 @@ export class Dstore implements IDstore {
       return await this.runQuery(q);
     } catch (error) {
       console.error(error, { kindName, filters, limit, ordering });
-      throw process.env.NODE_ENV === 'test'
-        ? error
-        : new DstoreError('datastore.query error', error, {
-            kindName,
-            filters,
-            limit,
-            ordering,
-          });
+      throw new DstoreError('datastore.query error', error, {
+        kindName,
+        filters,
+        limit,
+        ordering,
+      });
     }
   }
 
@@ -691,9 +677,7 @@ export class Dstore implements IDstore {
           error
         );
         console.error(error);
-        throw process.env.NODE_ENV === 'test'
-          ? error
-          : new DstoreError('datastore.transaction execution error', error);
+        throw new DstoreError('datastore.transaction execution error', error);
       }
       try {
         commitApiResponse = await transaction.commit()[0];
@@ -706,9 +690,7 @@ export class Dstore implements IDstore {
           error,
           ret
         );
-        throw process.env.NODE_ENV === 'test'
-          ? error
-          : new DstoreError('datastore.transaction execution error', error);
+        throw new DstoreError('datastore.transaction execution error', error);
       }
     });
     return ret;
@@ -719,6 +701,10 @@ export class DstoreError extends Error {
   public readonly extensions: Record<string, unknown>;
   public readonly originalError: Error | undefined;
   readonly [key: string]: unknown;
+  protected readonly stack_before_rethrow: string | undefined;
+  public readonly code: number | undefined;
+  protected readonly details: string | undefined;
+  protected readonly note: string | undefined;
 
   constructor(
     message: string,
@@ -731,12 +717,23 @@ export class DstoreError extends Error {
     if (!this.name) {
       Object.defineProperty(this, 'name', { value: 'DstoreError' });
     }
-    // code: 3,
-    // details: 'The key path element name is the empty string.',
     // metadata: Metadata { internalRepr: Map(0) {}, options: {} },
-    // note: 'Exception occurred in retry method that was not classified as transient'
     this.originalError = originalError;
     this.extensions = { ...extensions };
+    this.stack_before_rethrow = this.stack;
+    const message_lines = (this.message.match(/n/g) || []).length + 1;
+    this.stack =
+      this.stack
+        .split('\n')
+        .slice(0, message_lines + 1)
+        .join('\n') +
+      '\n' +
+      originalError.stack;
+
+    // These are usually present on Datastore Errors
+    this.code = originalError['code'];
+    this.details = originalError['details'];
+    this.note = originalError['note'];
     // logger.error({ err: originalError, extensions }, message);
   }
 }

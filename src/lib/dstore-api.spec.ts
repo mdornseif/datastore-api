@@ -252,7 +252,6 @@ test('query', async (t) => {
   t.is(entities?.[0]?.foo, 'bar');
   t.is(entities?.[0]?.[Datastore.KEY]?.kind, 'testYodel');
   t.is(runQueryInfo?.moreResults, 'MORE_RESULTS_AFTER_LIMIT');
-  t.is(entities?.[0]?._keyStr, 'agByDwsSCXRlc3RZb2RlbBgDDA');
 
   // modern interface
   const [result2] = await kvStore.query('testYodel', [], 1, [], ['baz']);
@@ -265,6 +264,20 @@ test('query', async (t) => {
 
   const key = kvStore.readKey(result2?.[0]);
   t.is(key.id, entity.key.id);
+});
+
+test('set', async (t) => {
+  // expect.assertions(2);
+  const kvStore = getDstore('test');
+  const result = await kvStore.set(kvStore.key(['testYodel', '5e7']), {
+    foo: 'bar',
+  });
+  t.deepEqual(result.name, '5e7');
+  t.deepEqual(result.kind, 'testYodel');
+
+  // autogenerate key
+  const result2 = await kvStore.set(kvStore.key(['testYodel']), { foo: 'bar' });
+  t.deepEqual(result2.kind, 'testYodel');
 });
 
 test('save / upsert', async (t) => {
