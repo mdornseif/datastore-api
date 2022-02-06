@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.3](https://github.com/mdornseif/datastore-api/compare/v1.7.2...v1.7.3) (2022-02-06)
+
+
+### Bug Fixes
+
+* Preserve Stacktraces in errors ([dda1777](https://github.com/mdornseif/datastore-api/commit/dda177778e5dd08ca363b00ff868ec15071afc36))
+
 ### [1.7.2](https://github.com/mdornseif/datastore-api/compare/v1.7.1...v1.7.2) (2022-02-06)
 
 
