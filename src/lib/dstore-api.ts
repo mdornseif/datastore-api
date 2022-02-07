@@ -727,9 +727,9 @@ export class DstoreError extends Error {
     this.stack =
       (this.stack?.split('\n')[0] || '') +
       '\n' +
-      (originalError?.stack?.split('\n')?.slice(1, -1)?.join('\n') || '') +
+      (originalError?.stack?.split('\n')?.slice(1)?.join('\n') || '') +
       '\n' +
-      (this.stack?.split('\n')?.slice(1, -1)?.join('\n') || '');
+      (this.stack?.split('\n')?.slice(1)?.join('\n') || '');
 
     // These are usually present on Datastore Errors
     // logger.error({ err: originalError, extensions }, message);
