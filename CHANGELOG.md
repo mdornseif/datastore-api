@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.4](https://github.com/mdornseif/datastore-api/compare/v1.7.3...v1.7.4) (2022-02-07)
+
+
+### Bug Fixes
+
+* do not tread JS slices like Python slices ([fd9d13d](https://github.com/mdornseif/datastore-api/commit/fd9d13d770928e198001464977ac47ffc008f46f))
+
 ### [1.7.3](https://github.com/mdornseif/datastore-api/compare/v1.7.2...v1.7.3) (2022-02-06)
 
 
