@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/mdornseif/datastore-api/compare/v1.7.4...v2.0.0) (2022-02-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* do not collect metrics with `kindName`
+
+### Bug Fixes
+
+* do not collect metrics with `kindName` ([00495f7](https://github.com/mdornseif/datastore-api/commit/00495f7093505b2de2d7a9693aad54253d363eb0))
+* getMulti returns results for all keys ([ca9cad2](https://github.com/mdornseif/datastore-api/commit/ca9cad292cfebf2284529496d82eceea05baf02d))
+
 ### [1.7.4](https://github.com/mdornseif/datastore-api/compare/v1.7.3...v1.7.4) (2022-02-07)
 
 
