@@ -343,7 +343,6 @@ export class Dstore implements IDstore {
           : []
       );
     } catch (error) {
-      // console.error(error)
       metricFailureCounter.inc({ operation: 'get' });
       await setImmediate();
       throw new DstoreError('datastore.getMulti error', error, { keys });
@@ -552,7 +551,6 @@ export class Dstore implements IDstore {
     try {
       ret = (await this.getDoT().delete(keys)) || undefined;
     } catch (error) {
-      // console.error(error)
       metricFailureCounter.inc({ operation: 'delete' });
       await setImmediate();
       throw new DstoreError('datastore.delete error', error);
