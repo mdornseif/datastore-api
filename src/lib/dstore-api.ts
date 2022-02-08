@@ -131,7 +131,7 @@ type IDstore = {
   get: (key: Key) => Promise<IDstoreEntry | null>;
   getMulti: (
     keys: ReadonlyArray<Key>
-  ) => Promise<ReadonlyArray<IDstoreEntry | undefined>>;
+  ) => Promise<ReadonlyArray<IDstoreEntry | null>>;
   set: (key: Key, entry: IDstoreEntry) => Promise<Key>;
   save: (
     entities: readonly DstoreSaveEntity[]
@@ -331,9 +331,7 @@ export class Dstore implements IDstore {
    *
    * @category Datastore Drop-In
    */
-  async getMulti(
-    keys: readonly Key[]
-  ): Promise<Array<IDstoreEntry | undefined>> {
+  async getMulti(keys: readonly Key[]): Promise<Array<IDstoreEntry | null>> {
     // assertIsArray(keys);
     let results: IDstoreEntry[];
     const metricEnd = metricHistogram.startTimer();
@@ -358,7 +356,7 @@ export class Dstore implements IDstore {
     entities.forEach((entity) => {
       entitiesByKey[JSON.stringify(entity[Datastore.KEY])] = entity;
     });
-    return keys.map((key) => entitiesByKey[JSON.stringify(key)] || undefined);
+    return keys.map((key) => entitiesByKey[JSON.stringify(key)] || null);
   }
 
   /** `set()` is addition to [[Datastore]]. It provides a classic Key-value Interface.
