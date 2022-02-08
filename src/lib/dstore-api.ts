@@ -6,7 +6,7 @@
  * In future https://github.com/graphql/dataloader might be used for batching.
  *
  * Created by Dr. Maximillian Dornseif 2021-12-05 in huwawi3backend 11.10.0
- * Copyright (c) 2021 Dr. Maximillian Dornseif
+ * Copyright (c) 2021, 2022 Dr. Maximillian Dornseif
  */
 
 import { AsyncLocalStorage } from 'async_hooks';
@@ -57,7 +57,7 @@ const transactionAsyncLocalStorage = new AsyncLocalStorage();
 const metricHistogram = new promClient.Histogram({
   name: 'dstore_requests_seconds',
   help: 'How long did Datastore operations take?',
-  labelNames: ['operation', 'kindName'],
+  labelNames: ['operation'],
 });
 const metricFailureCounter = new promClient.Counter({
   name: 'dstore_failures_total',
@@ -316,8 +316,9 @@ export class Dstore implements IDstore {
 
   /** `getMulti()` reads several [[IDstoreEntry]]s from the Datastore.
    *
-   * It returns a list of [[IDstoreEntry]]s or `null` if not found.
-
+   * It returns a list of [[IDstoreEntry]]s or `undefined` if not found. Entries are in the same Order as the keys in the Parameter.
+   * This is different from the @google-cloud/datastore where not found items are not present in the result and the order in the result list is undefined.
+   *
    * The underlying Datastore API Call is [lookup](https://cloud.google.com/datastore/docs/reference/data/rest/v1/projects/lookup).
    *
    * It is in the Spirit of [Datastore.get()]. Unfortunately currently (late 2021) there is no formal documentation from Google on [Datastore.get()].
@@ -334,10 +335,10 @@ export class Dstore implements IDstore {
     keys: readonly Key[]
   ): Promise<Array<IDstoreEntry | undefined>> {
     // assertIsArray(keys);
-    let ret: IDstoreEntry[];
+    let results: IDstoreEntry[];
     const metricEnd = metricHistogram.startTimer();
     try {
-      ret = this.fixKeys(
+      results = this.fixKeys(
         keys.length > 0
           ? (await this.getDoT().get(keys as Writable<typeof keys>))?.[0]
           : []
@@ -347,9 +348,17 @@ export class Dstore implements IDstore {
       await setImmediate();
       throw new DstoreError('datastore.getMulti error', error, { keys });
     } finally {
-      metricEnd({ kindName: keys?.[0]?.kind, operation: 'get' });
+      metricEnd({ operation: 'get' });
     }
-    return ret;
+
+    // Sort resulting entities by the keys they were requested with.
+    assertIsArray(results);
+    const entities = results as IDstoreEntry[];
+    const entitiesByKey: Record<string, IDstoreEntry> = {};
+    entities.forEach((entity) => {
+      entitiesByKey[JSON.stringify(entity[Datastore.KEY])] = entity;
+    });
+    return keys.map((key) => entitiesByKey[JSON.stringify(key)] || undefined);
   }
 
   /** `set()` is addition to [[Datastore]]. It provides a classic Key-value Interface.
@@ -437,7 +446,7 @@ export class Dstore implements IDstore {
       await setImmediate();
       throw new DstoreError('datastore.save error', error);
     } finally {
-      metricEnd({ kindName: entities?.[0]?.key?.kind, operation: 'save' });
+      metricEnd({ operation: 'save' });
     }
     return ret;
   }
@@ -471,7 +480,7 @@ export class Dstore implements IDstore {
       await setImmediate();
       throw new DstoreError('datastore.insert error', error);
     } finally {
-      metricEnd({ kindName: entities?.[0]?.key?.kind, operation: 'insert' });
+      metricEnd({ operation: 'insert' });
     }
     return ret;
   }
@@ -519,7 +528,7 @@ export class Dstore implements IDstore {
       await setImmediate();
       throw new DstoreError('datastore.update error', error);
     } finally {
-      metricEnd({ kindName: entities?.[0]?.key?.kind, operation: 'update' });
+      metricEnd({ operation: 'update' });
     }
     return ret;
   }
@@ -555,7 +564,7 @@ export class Dstore implements IDstore {
       await setImmediate();
       throw new DstoreError('datastore.delete error', error);
     } finally {
-      metricEnd({ kindName: keys?.[0]?.kind, operation: 'delete' });
+      metricEnd({ operation: 'delete' });
     }
     return ret;
   }
@@ -587,7 +596,7 @@ export class Dstore implements IDstore {
       await setImmediate();
       throw new DstoreError('datastore.runQuery error', error);
     } finally {
-      metricEnd({ kindName: query?.kinds?.[0], operation: 'query' });
+      metricEnd({ operation: 'query' });
     }
     return ret;
   }
