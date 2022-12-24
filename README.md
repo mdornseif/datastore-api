@@ -23,6 +23,7 @@ Main differences:
 - [allocateOneId](http://mdornseif.io/datastore-api/classes/Dstore.html#allocateOneId) returns a single numeric string encoded unique datastore id without the need of fancy unpacking.
 - [runInTransaction](http://mdornseif.io/datastore-api/classes/Dstore.html#runInTransaction) allows you to provide a function to be executed inside an transaction without the need of passing around the transaction object. This is modelled after Python 2.7 [ndb's `@ndb.transactional` feature](https://cloud.google.com/appengine/docs/standard/python/ndb/transactions). This is implemented via node's [AsyncLocalStorage](https://nodejs.org/docs/latest-v14.x/api/async_hooks.html).
 - [keySerialize](http://mdornseif.io/datastore-api/classes/Dstore.html#keySerialize) is synchronous. 🦄
+- Starting your code with the environment variable `DEBUG='ds:api'` allows you to trace API calls.
 
 Find the full documentation [here](http://mdornseif.io/datastore-api/classes/Dstore.html). In there also some of the idiosyncrasies of using the Datastore are explained.
 
