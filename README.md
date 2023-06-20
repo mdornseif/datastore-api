@@ -25,9 +25,13 @@ Main differences:
 - [keySerialize](http://mdornseif.io/datastore-api/classes/Dstore.html#keySerialize) is synchronous. 🦄
 - Starting your code with the environment variable `DEBUG='ds:api'` allows you to trace API calls.
 
-Find the full documentation [here](http://mdornseif.io/datastore-api/classes/Dstore.html). In there also some of the idiosyncrasies of using the Datastore are explained.
+Find the full documentation [here](https://mdornseif.github.io/datastore-api/classes/Dstore.html). In there also some of the idiosyncrasies of using the Datastore are explained.
 
-See [the API documentation](http://mdornseif.io/datastore-api/classes/Dstore.html) for Details, [Github](https://github.com/mdornseif/datastore-api) for source.
+See [the API documentation](http://mdornseif.github.io/datastore-api/classes/Dstore.html) for Details, [Github](https://github.com/mdornseif/datastore-api) for source.
+
+## Major issues
+
+* The Javascript-Datastore Bindings use nanosecond-Timestamp Information stored in the Datasor and rounds it to milliseconds. Python at least reteins microseconds.
 
 ## Metrics
 
