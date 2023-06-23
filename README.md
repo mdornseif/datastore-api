@@ -31,7 +31,8 @@ See [the API documentation](http://mdornseif.github.io/datastore-api/classes/Dst
 
 ## Major issues
 
-* The Javascript-Datastore Bindings use nanosecond-Timestamp Information stored in the Datasor and rounds it to milliseconds. Python at least reteins microseconds.
+* The Javascript-Datastore Bindings use nanosecond-Timestamp Information stored in the Datasore and rounds it to milliseconds. Python at least retains microseconds.
+* the old `get_entity_group_version()` / `getEntityGroupVersion()` API has been retired. You can still for `key` query `{ path: [key.path[0], {'kind': '__entity_group__', 'id': 1}]}` to get a `__version__` property. The reliability of this data on FireStore is unknown.
 
 ## Metrics
 
