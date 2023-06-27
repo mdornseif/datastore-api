@@ -31,8 +31,12 @@ See [the API documentation](http://mdornseif.github.io/datastore-api/classes/Dst
 
 ## Major issues
 
-* The Javascript-Datastore Bindings use nanosecond-Timestamp Information stored in the Datasore and rounds it to milliseconds. Python at least retains microseconds.
-* the old `get_entity_group_version()` / `getEntityGroupVersion()` API has been retired. You can still for `key` query `{ path: [key.path[0], {'kind': '__entity_group__', 'id': 1}]}` to get a `__version__` property. The reliability of this data on FireStore is unknown.
+- The Javascript-Datastore Bindings use nanosecond-Timestamp Information stored in the Datasore and rounds it to milliseconds. Python at least retains microseconds.
+- the old `get_entity_group_version()` / `getEntityGroupVersion()` API has been retired. You can still for `key` query `{ path: [key.path[0], {'kind': '__entity_group__', 'id': 1}]}` to get a `__version__` property. The reliability of this data on FireStore is unknown.
+- Googles Javascript API decided to use `[Symbol(KEY)]` to represent the Key in an entity. This results in all kinds of confusion when serializing to JSON, e.g. for caching. This library adds the property `_keyStr` which will be transparently used to regenerate `[Symbol(KEY)]` when needed.
+- Many functions are somewhat polymorphic where the shape of the return value depends on the function parameters, e.g. if the API was called with a key or a list of keys. You are encouraged to alvais provide a list of parameters instead a single parameter, e.g. `get([key])`  instead of `get(key)`.
+- `insert()` and `save()` sometimes return the key being written and sometimes not. So you might or might not get some data in `insertResponse?.[0].mutationResults?.[0]?.key?.path` - urgs.
+- Google avoids [BigInt](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/BigInt). So `key.id` is (usually but not always) returned as a String but you have to provide a Number to the API.
 
 ## Metrics
 
