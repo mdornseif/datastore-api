@@ -181,6 +181,8 @@ Main differences:
 This documentation also tries to document the little known idiosyncrasies of the [@google-cloud/datastore](https://github.com/googleapis/nodejs-datastore) library. See the corresponding functions.
 */
 export class Dstore implements IDstore {
+  engine = 'Dstore';
+  engines: string[] = [];
   private readonly urlSaveKey = new entity.URLSafeKey();
 
   /** Generate a Dstore instance for a specific [[Datastore]] instance.
@@ -204,6 +206,7 @@ export class Dstore implements IDstore {
     readonly logger?: string
   ) {
     assertIsObject(datastore);
+    this.engines.push(this.engine);
   }
 
   /** Gets the Datastore or the current Transaction. */
@@ -461,6 +464,8 @@ export class Dstore implements IDstore {
    *
    * This function can be completely emulated by using [[save]] with `method: 'insert'` inside each [[DstoreSaveEntity]].
    *
+   *     await ds.insert([{key: ds.key(['testKind', 123]), entity: {data:' 123'}}])
+   *
    * @throws [[DstoreError]]
    * @category Datastore Drop-In
    */
@@ -571,13 +576,13 @@ export class Dstore implements IDstore {
    *
    * Compatible to [createQuery](https://cloud.google.com/nodejs/docs/reference/datastore/latest/datastore/datastore#_google_cloud_datastore_Datastore_createQuery_member_1_) in the datastore.
    *
-   * @param kind Name of the [[Datastore]][Kind](https://cloud.google.com/datastore/docs/concepts/entities#kinds_and_identifiers) ("Table") which should be searched.
+   * @param kindName Name of the [[Datastore]][Kind](https://cloud.google.com/datastore/docs/concepts/entities#kinds_and_identifiers) ("Table") which should be searched.
    *
    * @category Datastore Drop-In
    */
-  createQuery(kind: string): Query {
+  createQuery(kindName: string): Query {
     try {
-      return this.getDoT().createQuery(kind);
+      return this.getDoT().createQuery(kindName);
     } catch (error) {
       throw new DstoreError('datastore.createQuery error', error);
     }
@@ -599,6 +604,18 @@ export class Dstore implements IDstore {
     return ret;
   }
 
+  /** `query()` combined [[createQuery]] and [[runQuery]] in a single call.
+   *
+   *
+   * @param kindName Name of the [[Datastore]][Kind](https://cloud.google.com/datastore/docs/concepts/entities#kinds_and_identifiers) ("Table") which should be searched.
+   * @param filters List of [[Query]] filter() calls.
+   * @param limit Maximum Number of Results to return.
+   * @param ordering List of [[Query]] order() calls.
+   * @param selection selectionList of [[Query]] select() calls.
+   * @param cursor unsupported so far.
+   *
+   * @category Datastore Drop-In
+   */
   async query(
     kindName: string,
     filters: TGqlFilterList = [],
