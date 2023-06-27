@@ -20,9 +20,11 @@
     "datastore"
   ],
   "scripts": {
+    "analyze" : "size-limit --why",
     "build": "run-p build:*",
     "build:main": "tsc -p tsconfig.json",
     "build:module": "tsc -p tsconfig.module.json",
+    "lint": "yarn run fix:lint",
     "fix": "run-s fix:*",
     "fix:prettier": "prettier \"src/**/*.ts\" --write",
     "fix:lint": "eslint src --ext .ts --fix",
@@ -45,12 +47,22 @@
     "doc:html": "typedoc src/ --exclude **/*.spec.ts --out build/docs",
     "doc:json": "typedoc src/ --exclude **/*.spec.ts --json build/docs/typedoc.json",
     "doc:publish": "gh-pages -m \"[ci skip] Updates\" -d build/docs",
+    "size" : "size-limit",
+    "start" : "dts watch",
     "version": "standard-version",
     "reset-hard": "git clean -dfx && git reset --hard && yarn",
-    "prepare-release": "run-s reset-hard test cov:check doc:html version doc:publish"
+    "prepare-release": "run-s reset-hard test cov:check doc:html version doc:publish",
+    "unimported" : "npx unimported; npx findead src"
   },
   "engines": {
     "node": ">=16"
+  },
+  "release" : {
+    "branches" : [
+      "main",
+      "master",
+      "next"
+    ]
   },
   "dependencies": {
     "assertate": "^2.4.0",
