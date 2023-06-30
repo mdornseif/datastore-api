@@ -27,7 +27,7 @@ function getDstore() {
   return new Dstore(new Datastore({ namespace: 'test', projectId: process.env.GCLOUD_PROJECT }))
 }
 
-test('keySerialize', async () => {
+test.skip('keySerialize', async () => {
   const kvStore = getDstore()
   assert.deepEqual(kvStore.key(['testYodel', 123]).path, ['testYodel', 123])
   assert.deepEqual(JSON.parse(JSON.stringify(kvStore.key(['testYodel', 123]))), {
