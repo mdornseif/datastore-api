@@ -43,6 +43,11 @@ jobs:
       - name: Lint 🔍
         run: yarn lint
 
+      # - id: 'auth'
+      #   name: 'Authenticate to Google Cloud for Tests 🔓'
+      #   uses: 'google-github-actions/auth@v1'
+      #   with:
+      #     credentials_json: '${{ env.GCLOUD_SERVICE_KEY_RWTEST }}'
       - name: Test 🧪
         run: yarn test
 
