@@ -227,37 +227,35 @@ export class Datastore extends OrigDatastore {
     })
 
     for (let filter of query.filters) {
-      if (filter.name ===  '__key__' && filter.op === 'HAS_ANCESTOR') {
+      if (filter.name === '__key__' && filter.op === 'HAS_ANCESTOR') {
         const parent = filter.val.path.join('⭕️')
         for (let [ks, entity] of filtered) {
           const k = JSON.parse(ks)
-          if(k.path.join('⭕️').startsWith(parent)) {
+          if (k.path.join('⭕️').startsWith(parent)) {
             reply.push(entity)
           }
         }
-      }
-      else if (filter.op === '=') {
+      } else if (filter.op === '=') {
         for (let [ks, entity] of filtered) {
-          if(entity[filter.name] == filter.val) {
+          if (entity[filter.name] == filter.val) {
             reply.push(entity)
           }
         }
-      }
-      else if (filter.op === '>=') {
+      } else if (filter.op === '>=') {
         for (let [ks, entity] of filtered) {
-          if(entity[filter.name] >= filter.val) {
+          if (entity[filter.name] >= filter.val) {
             reply.push(entity)
           }
         }
-      }
-      else if (filter.op === '<') {
+      } else if (filter.op === '<') {
         for (let [ks, entity] of filtered) {
-          if(entity[filter.name] >= filter.val) {
+          if (entity[filter.name] >= filter.val) {
             reply.push(entity)
           }
         }
+      } else {
+        console.log('unknown filter', filter)
       }
-      else {console.log('unknown filter', filter)}
     }
 
     setImmediate(() => callback(null, reply, {}))
@@ -462,42 +460,42 @@ promisifyAll(Datastore, {
 export default Datastore
 
 class Transaction extends DatastoreRequest {
-  namespace?: string;
-  readOnly: boolean;
-  request: Function;
-  modifiedEntities_: ModifiedEntities;
-  skipCommit?: boolean;
+  namespace?: string
+  readOnly: boolean
+  request: Function
+  modifiedEntities_: ModifiedEntities
+  skipCommit?: boolean
   constructor(datastore: Datastore, options?: TransactionOptions) {
-    super();
+    super()
     /**
      * @name Transaction#datastore
      * @type {Datastore}
      */
-    this.datastore = datastore;
+    this.datastore = datastore
 
     /**
      * @name Transaction#namespace
      * @type {string}
      */
-    this.namespace = datastore.namespace;
+    this.namespace = datastore.namespace
 
-    options = options || {};
+    options = options || {}
 
-    this.id = options.id;
-    this.readOnly = options.readOnly === true;
+    this.id = options.id
+    this.readOnly = options.readOnly === true
 
     // A queue for entity modifications made during the transaction.
-    this.modifiedEntities_ = [];
+    this.modifiedEntities_ = []
 
     // Queue the callbacks that process the API responses.
-    this.requestCallbacks_ = [];
+    this.requestCallbacks_ = []
 
     // Queue the requests to make when we send the transactional commit.
-    this.requests_ = [];
+    this.requests_ = []
   }
-  commit(gaxOptions?: CallOptions): Promise<CommitResponse>;
-  commit(callback: CommitCallback): void;
-  commit(gaxOptions: CallOptions, callback: CommitCallback): void;
+  commit(gaxOptions?: CallOptions): Promise<CommitResponse>
+  commit(callback: CommitCallback): void
+  commit(gaxOptions: CallOptions, callback: CommitCallback): void
   commit(
     gaxOptionsOrCallback?: CallOptions | CommitCallback,
     cb?: CommitCallback
@@ -507,145 +505,128 @@ class Transaction extends DatastoreRequest {
         ? gaxOptionsOrCallback
         : typeof cb === 'function'
         ? cb
-        : () => {};
-    const gaxOptions =
-      typeof gaxOptionsOrCallback === 'object' ? gaxOptionsOrCallback : {};
+        : () => {}
+    const gaxOptions = typeof gaxOptionsOrCallback === 'object' ? gaxOptionsOrCallback : {}
 
     if (this.skipCommit) {
-      setImmediate(callback);
-      return;
+      setImmediate(callback)
+      return
     }
 
-    const keys: Entities = {};
+    const keys: Entities = {}
 
-
-    callback(null, undefined);
+    callback(null, undefined)
   }
 
-  createQuery(kind?: string): Query;
-  createQuery(kind?: string[]): Query;
-  createQuery(namespace: string, kind: string): Query;
-  createQuery(namespace: string, kind: string[]): Query;
-  createQuery(
-    namespaceOrKind?: string | string[],
-    kind?: string | string[]
-  ): Query {
-    return this.datastore.createQuery.call(
-      this,
-      namespaceOrKind as string,
-      kind as string[]
-    );
+  createQuery(kind?: string): Query
+  createQuery(kind?: string[]): Query
+  createQuery(namespace: string, kind: string): Query
+  createQuery(namespace: string, kind: string[]): Query
+  createQuery(namespaceOrKind?: string | string[], kind?: string | string[]): Query {
+    return this.datastore.createQuery.call(this, namespaceOrKind as string, kind as string[])
   }
 
   createAggregationQuery(query: Query): AggregateQuery {
-    return this.datastore.createAggregationQuery.call(this, query);
+    return this.datastore.createAggregationQuery.call(this, query)
   }
   delete(entities?: Entities): any {
     this.datastore.delete(entities)
   }
   insert(entities: Entities): void {
-    this.save(entities);
+    this.save(entities)
   }
 
-  rollback(callback: RollbackCallback): void;
-  rollback(gaxOptions?: CallOptions): Promise<RollbackResponse>;
-  rollback(gaxOptions: CallOptions, callback: RollbackCallback): void;
+  rollback(callback: RollbackCallback): void
+  rollback(gaxOptions?: CallOptions): Promise<RollbackResponse>
+  rollback(gaxOptions: CallOptions, callback: RollbackCallback): void
   rollback(
     gaxOptionsOrCallback?: CallOptions | RollbackCallback,
     cb?: RollbackCallback
   ): void | Promise<RollbackResponse> {
-    const gaxOptions =
-      typeof gaxOptionsOrCallback === 'object' ? gaxOptionsOrCallback : {};
-    const callback =
-      typeof gaxOptionsOrCallback === 'function' ? gaxOptionsOrCallback : cb!;
+    const gaxOptions = typeof gaxOptionsOrCallback === 'object' ? gaxOptionsOrCallback : {}
+    const callback = typeof gaxOptionsOrCallback === 'function' ? gaxOptionsOrCallback : cb!
 
-        callback(null, undefined);
+    callback(null, undefined)
   }
 
-  run(options?: RunOptions): Promise<RunResponse>;
-  run(callback: RunCallback): void;
-  run(options: RunOptions, callback: RunCallback): void;
-  run(
-    optionsOrCallback?: RunOptions | RunCallback,
-    cb?: RunCallback
-  ): void | Promise<RunResponse> {
-    const options =
-      typeof optionsOrCallback === 'object' ? optionsOrCallback : {};
-    const callback =
-      typeof optionsOrCallback === 'function' ? optionsOrCallback : cb!;
+  run(options?: RunOptions): Promise<RunResponse>
+  run(callback: RunCallback): void
+  run(options: RunOptions, callback: RunCallback): void
+  run(optionsOrCallback?: RunOptions | RunCallback, cb?: RunCallback): void | Promise<RunResponse> {
+    const options = typeof optionsOrCallback === 'object' ? optionsOrCallback : {}
+    const callback = typeof optionsOrCallback === 'function' ? optionsOrCallback : cb!
 
     const reqOpts = {
       transactionOptions: {},
-    } as RequestOptions;
+    } as RequestOptions
 
     if (options.readOnly || this.readOnly) {
-      reqOpts.transactionOptions!.readOnly = {};
+      reqOpts.transactionOptions!.readOnly = {}
     }
 
     if (options.transactionId || this.id) {
       reqOpts.transactionOptions!.readWrite = {
         previousTransaction: options.transactionId || this.id,
-      };
+      }
     }
 
     if (options.transactionOptions) {
-      reqOpts.transactionOptions = options.transactionOptions;
+      reqOpts.transactionOptions = options.transactionOptions
     }
 
-        callback(null, this, undefined);
+    callback(null, this, undefined)
   }
   save(entities: Entities): void {
     this.datastore.save(entities)
   }
 
   update(entities: Entities): void {
-    entities = [entities].flat()
+    entities = [entities]
+      .flat()
       .map(DatastoreRequest.prepareEntityObject_)
       .map((x: PrepareEntityObjectResponse) => {
-        x.method = 'update';
-        return x;
-      });
+        x.method = 'update'
+        return x
+      })
 
-    this.save(entities);
+    this.save(entities)
   }
 
   upsert(entities: Entities): void {
-    entities = [entities].flat()
+    entities = [entities]
+      .flat()
       .map(DatastoreRequest.prepareEntityObject_)
       .map((x: PrepareEntityObjectResponse) => {
-        x.method = 'upsert';
-        return x;
-      });
+        x.method = 'upsert'
+        return x
+      })
 
-    this.save(entities);
+    this.save(entities)
   }
 }
 
 export type ModifiedEntities = Array<{
-  entity: {key: Entity};
-  method: string;
-  args: Entity[];
-}>;
-export type RunResponse = [
-  Transaction,
-  google.datastore.v1.IBeginTransactionResponse
-];
+  entity: { key: Entity }
+  method: string
+  args: Entity[]
+}>
+export type RunResponse = [Transaction, google.datastore.v1.IBeginTransactionResponse]
 export interface RunCallback {
   (
     error: Error | null,
     transaction: Transaction | null,
     response?: google.datastore.v1.IBeginTransactionResponse
-  ): void;
+  ): void
 }
 export interface RollbackCallback {
-  (error: Error | null, response?: google.datastore.v1.IRollbackResponse): void;
+  (error: Error | null, response?: google.datastore.v1.IRollbackResponse): void
 }
-export type RollbackResponse = [google.datastore.v1.IRollbackResponse];
+export type RollbackResponse = [google.datastore.v1.IRollbackResponse]
 export interface RunOptions {
-  readOnly?: boolean;
-  transactionId?: string;
-  transactionOptions?: TransactionOptions;
-  gaxOptions?: CallOptions;
+  readOnly?: boolean
+  transactionId?: string
+  transactionOptions?: TransactionOptions
+  gaxOptions?: CallOptions
 }
 /*! Developer Documentation
  *
@@ -653,13 +634,5 @@ export interface RunOptions {
  * that a callback is omitted.
  */
 promisifyAll(Transaction, {
-  exclude: [
-    'createAggregationQuery',
-    'createQuery',
-    'delete',
-    'insert',
-    'save',
-    'update',
-    'upsert',
-  ],
-});
+  exclude: ['createAggregationQuery', 'createQuery', 'delete', 'insert', 'save', 'update', 'upsert'],
+})
