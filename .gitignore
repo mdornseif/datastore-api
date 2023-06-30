@@ -1,10 +1,12 @@
 .idea/*
-.nyc_output
-build
+.nyc_output/
+build/
 node_modules
 test
 src/**.js
-coverage
+coverage/
 *.log
 package-lock.json
+.DS_Store
 *~
+dist

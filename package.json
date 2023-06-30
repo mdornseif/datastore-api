@@ -1,78 +1,37 @@
 {
-  "name": "datastore-api",
-  "version": "2.0.1",
-  "description": "Simplified, more consitent API for Google Cloud Datastore",
-  "main": "build/main/index.js",
-  "typings": "build/main/index.d.ts",
-  "module": "build/module/index.js",
-  "repository": "https://github.com/mdornseif/datastore-api",
-  "homepage": "http://github.com/mdornseif/datastore-api/",
-  "license": "MIT",
-  "lint-staged": {
-    "*{css,scss,md,markdown,json,yaml,yml,graphql,html}": "prettier -w",
-    "*{js,jsx,ts,tsx}": [
-      "prettier -w",
-      "eslint --cache --fix"
+  "author": "Maximillian Dornseif",
+  "ava": {
+    "failFast": true,
+    "files": [
+      "!build/module/**"
     ],
-    "package*json": "sort-package-json"
+    "timeout": "60s",
+    "typescript": {
+      "rewritePaths": {
+        "src/": "build/main/"
+      }
+    }
   },
-  "keywords": [
-    "datastore"
-  ],
-  "scripts": {
-    "analyze": "size-limit --why",
-    "build": "run-p build:*",
-    "build:main": "tsc -p tsconfig.json",
-    "build:module": "tsc -p tsconfig.module.json",
-    "lint": "yarn run fix:lint",
-    "fix": "run-s fix:*",
-    "fix:prettier": "prettier \"src/**/*.ts\" --write",
-    "fix:lint": "eslint src --ext .ts --fix",
-    "test": "run-s build test:*",
-    "test:lint": "eslint src --ext .ts",
-    "test:prettier": "prettier \"src/**/*.ts\" --list-different",
-    "test:spelling": "cspell \"{README.md,.github/*.md,src/**/*.ts}\"",
-    "test:unit": "nyc ava --verbose",
-    "check-cli": "run-s test diff-integration-tests check-integration-tests",
-    "check-integration-tests": "run-s check-integration-test:*",
-    "diff-integration-tests": "mkdir -p diff && rm -rf diff/test && cp -r test diff/test && rm -rf diff/test/test-*/.git && cd diff && git init --quiet && git add -A && git commit --quiet --no-verify --allow-empty -m 'WIP' && echo '\\n\\nCommitted most recent integration test output in the \"diff\" directory. Review the changes with \"cd diff && git diff HEAD\" or your preferred git diff viewer.'",
-    "watch:build": "tsc -p tsconfig.json -w",
-    "watch:test": "nyc --silent ava --watch",
-    "cov": "run-s build test:unit cov:html cov:lcov && open-cli coverage/index.html",
-    "cov:html": "nyc report --reporter=html",
-    "cov:lcov": "nyc report --reporter=lcov",
-    "cov:send": "run-s cov:lcov && codecov",
-    "cov:check": "nyc report && nyc check-coverage --lines 50 --functions 20 --branches 20",
-    "doc": "run-s doc:html && open-cli build/docs/index.html",
-    "doc:html": "typedoc src/ --exclude **/*.spec.ts --out build/docs",
-    "doc:json": "typedoc src/ --exclude **/*.spec.ts --json build/docs/typedoc.json",
-    "doc:publish": "gh-pages -m \"[ci skip] Updates\" -d build/docs",
-    "size": "size-limit",
-    "start": "dts watch",
-    "version": "standard-version",
-    "reset-hard": "git clean -dfx && git reset --hard && yarn",
-    "prepare-release": "run-s reset-hard test cov:check doc:html version doc:publish",
-    "unimported": "npx unimported; npx findead src"
-  },
-  "engines": {
-    "node": ">=16"
-  },
-  "release": {
-    "branches": [
-      "main",
-      "master",
-      "next"
-    ]
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
   },
   "dependencies": {
-    "assertate": "^2.4.0",
+    "assertate-debug": "^2.4.2",
     "google-datastore-emulator": "^5.1.0",
     "prom-client": "^14.0.1"
   },
+  "description": "Simplified, more consitent API for Google Cloud Datastore",
   "devDependencies": {
+    "@ava/typescript": "^4.0.0",
     "@google-cloud/datastore": "^6.6.2",
     "@google-cloud/promisify": "^3.0.1",
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
+    "@size-limit/preset-small-lib": "^8.2.6",
+    "@tsconfig/recommended": "^1.0.2",
+    "@types/debug": "^4.1.8",
+    "@types/is": "^0.0.22",
     "@types/node": "^17.0.0",
     "@typescript-eslint/eslint-plugin": "^4.0.1",
     "@typescript-eslint/parser": "^4.0.1",
@@ -98,9 +57,13 @@
     "standard-version": "^9.0.0",
     "ts-essentials": "9.1.2",
     "ts-node": "^10.4.0",
+    "tslib": "^2.6.0",
     "typedoc": "0.22.11",
     "typescript": "^4.0.2",
     "vitest": "^0.30.1"
+  },
+  "engines": {
+    "node": ">=16"
   },
   "files": [
     "build/main",
@@ -111,22 +74,37 @@
     "LICENSE",
     "README.md"
   ],
-  "ava": {
-    "failFast": true,
-    "timeout": "60s",
-    "typescript": {
-      "rewritePaths": {
-        "src/": "build/main/"
-      }
-    },
-    "files": [
-      "!build/module/**"
-    ]
-  },
-  "config": {
-    "commitizen": {
-      "path": "cz-conventional-changelog"
+  "homepage": "http://github.com/mdornseif/datastore-api/",
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
     }
+  },
+  "keywords": [
+    "datastore",
+    "google cloud"
+  ],
+  "license": "MIT",
+  "lint-staged": {
+    "*{css,scss,md,markdown,json,yaml,yml,graphql,html}": "prettier -w",
+    "*{js,jsx,ts,tsx}": [
+      "prettier -w",
+      "eslint --cache --fix"
+    ],
+    "package*json": "sort-package-json"
+  },
+  "main": "build/main/index.js",
+  "module": "build/module/index.js",
+  "name": "datastore-api",
+  "nyc": {
+    "exclude": [
+      "**/*.spec.js"
+    ],
+    "extends": "@istanbuljs/nyc-config-typescript"
+  },
+  "peerDependencies": {
+    "@google-cloud/datastore": "^6.6.2",
+    "debug": "^4.3.3"
   },
   "prettier": {
     "printWidth": 110,
@@ -134,14 +112,41 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "nyc": {
-    "extends": "@istanbuljs/nyc-config-typescript",
-    "exclude": [
-      "**/*.spec.js"
+  "release": {
+    "branches": [
+      "main",
+      "master",
+      "next"
     ]
   },
-  "peerDependencies": {
-    "@google-cloud/datastore": "^6.6.2",
-    "debug": "^4.3.3"
-  }
+  "repository": "https://github.com/mdornseif/datastore-api",
+  "scripts": {
+    "analyze": "size-limit --why",
+    "build": "dts build",
+    "check-cli": "run-s test diff-integration-tests check-integration-tests",
+    "check-integration-tests": "run-s check-integration-test:*",
+    "cov": "run-s build test:unit cov:html cov:lcov && open-cli coverage/index.html",
+    "cov:check": "nyc report && nyc check-coverage --lines 50 --functions 20 --branches 20",
+    "cov:html": "nyc report --reporter=html",
+    "cov:lcov": "nyc report --reporter=lcov",
+    "cov:send": "run-s cov:lcov && codecov",
+    "diff-integration-tests": "mkdir -p diff && rm -rf diff/test && cp -r test diff/test && rm -rf diff/test/test-*/.git && cd diff && git init --quiet && git add -A && git commit --quiet --no-verify --allow-empty -m 'WIP' && echo '\\n\\nCommitted most recent integration test output in the \"diff\" directory. Review the changes with \"cd diff && git diff HEAD\" or your preferred git diff viewer.'",
+    "doc": "run-s doc:html && open-cli build/docs/index.html",
+    "doc:html": "typedoc src/ --exclude **/*.spec.ts --out build/docs",
+    "doc:json": "typedoc src/ --exclude **/*.spec.ts --json build/docs/typedoc.json",
+    "doc:publish": "gh-pages -m \"[ci skip] Updates\" -d build/docs",
+    "fix": "run-s fix:*",
+    "fix:lint": "eslint src --ext .ts --fix",
+    "fix:prettier": "prettier \"src/**/*.ts\" --write",
+    "lint": "yarn run fix:lint",
+    "prepare-release": "run-s reset-hard test cov:check doc:html version doc:publish",
+    "reset-hard": "git clean -dfx && git reset --hard && yarn",
+    "size": "size-limit",
+    "start": "dts watch",
+    "test": "vitest",
+    "unimported": "npx unimported; npx findead src",
+    "version": "standard-version"
+  },
+  "typings": "build/main/index.d.ts",
+  "version": "2.0.1"
 }
