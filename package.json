@@ -25,7 +25,7 @@
   "description": "Simplified, more consitent API for Google Cloud Datastore",
   "devDependencies": {
     "@ava/typescript": "^4.0.0",
-    "@google-cloud/datastore": "^6.6.2",
+    "@google-cloud/datastore": "7.3",
     "@google-cloud/promisify": "^3.0.1",
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@size-limit/preset-small-lib": "^8.2.6",

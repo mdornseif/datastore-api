@@ -31,6 +31,8 @@ import {
   Query,
   PathType,
 } from '@google-cloud/datastore'
+import { google } from '@google-cloud/datastore/build/protos/protos'
+import { AggregateQuery } from '@google-cloud/datastore/build/src/aggregate'
 import { Entities, entity } from '@google-cloud/datastore/build/src/entity'
 import { RunQueryOptions, RunQueryResponse, RunQueryCallback } from '@google-cloud/datastore/build/src/query'
 import {
@@ -54,7 +56,6 @@ import { assert } from 'assertate-debug'
 import { CallOptions } from 'google-gax'
 import * as is from 'is'
 
-import { PathType, Query, Transaction } from '..'
 const urlSafeKey = new entity.URLSafeKey()
 
 const KEY_SELECT = '__key__'
@@ -462,7 +463,7 @@ export default Datastore
 class Transaction extends DatastoreRequest {
   namespace?: string
   readOnly: boolean
-  request: Function
+  request: any // Function
   modifiedEntities_: ModifiedEntities
   skipCommit?: boolean
   constructor(datastore: Datastore, options?: TransactionOptions) {
