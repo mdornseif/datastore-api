@@ -1,138 +1,134 @@
 {
-  "author": "Maximillian Dornseif",
-  "ava": {
-    "failFast": true,
-    "files": [
+  "author" : "Maximillian Dornseif",
+  "ava" : {
+    "failFast" : true,
+    "files" : [
       "!build/module/**"
     ],
-    "timeout": "60s",
-    "typescript": {
-      "rewritePaths": {
-        "src/": "build/main/"
+    "timeout" : "60s",
+    "typescript" : {
+      "rewritePaths" : {
+        "src/" : "build/main/"
       }
     }
   },
-  "config": {
-    "commitizen": {
-      "path": "cz-conventional-changelog"
+  "config" : {
+    "commitizen" : {
+      "path" : "cz-conventional-changelog"
     }
   },
-  "dependencies": {
-    "assertate-debug": "^2.4.2",
-    "prom-client": "^14.0.1"
+  "dependencies" : {
+    "assertate-debug" : "^2.4.2",
+    "prom-client" : "^14.0.1"
   },
-  "description": "Simplified, more consitent API for Google Cloud Datastore",
-  "devDependencies": {
-    "@google-cloud/datastore": "7.3",
-    "@google-cloud/promisify": "^3.0.1",
-    "@istanbuljs/nyc-config-typescript": "^1.0.1",
-    "@size-limit/preset-small-lib": "^8.2.6",
-    "@tsconfig/recommended": "^1.0.2",
-    "@types/debug": "^4.1.8",
-    "@types/is": "^0.0.22",
-    "@types/node": "^20.3.3",
-    "@typescript-eslint/eslint-plugin": "^4.0.1",
-    "@typescript-eslint/parser": "^4.0.1",
-    "codecov": "^3.5.0",
-    "cspell": "5.14.0",
-    "cz-conventional-changelog": "^3.3.0",
-    "debug": "^4.3.3",
-    "dts-cli": "^2.0.3",
-    "eslint": "^7.8.0",
-    "eslint-config-prettier": "^6.11.0",
-    "eslint-plugin-eslint-comments": "^3.2.0",
-    "eslint-plugin-flowtype": "^8.0.3",
-    "eslint-plugin-import": "2.25.4",
-    "eslint-plugin-jsx-a11y": "^6.7.1",
-    "eslint-plugin-prettier": "^4.2.1",
-    "eslint-plugin-react": "^7.32.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "gh-pages": "^5.0.0",
-    "google-datastore-emulator": "^7.0.0",
-    "husky": "^8.0.3",
-    "lint-staged": "^13.2.3",
-    "npm-run-all": "^4.1.5",
-    "nyc": "^15.1.0",
-    "open-cli": "7.2.0",
-    "prettier": "^2.1.1",
-    "size-limit": "^8.2.6",
-    "sort-package-json": "^2.5.0",
-    "standard-version": "^9.0.0",
-    "ts-essentials": "9.3.2",
-    "ts-node": "^10.4.0",
-    "tslib": "^2.6.0",
-    "typedoc": "0.22.11",
-    "typescript": "^4.0.2",
-    "vitest": "^0.32.2"
+  "description" : "Simplified, more consitent API for Google Cloud Datastore",
+  "devDependencies" : {
+    "@google-cloud/datastore" : "7.3",
+    "@google-cloud/promisify" : "^3.0.1",
+    "@istanbuljs/nyc-config-typescript" : "^1.0.1",
+    "@size-limit/preset-small-lib" : "^8.2.6",
+    "@tsconfig/recommended" : "^1.0.2",
+    "@types/debug" : "^4.1.8",
+    "@types/is" : "^0.0.22",
+    "@types/node" : "^20.3.3",
+    "@typescript-eslint/eslint-plugin" : "^4.0.1",
+    "@typescript-eslint/parser" : "^4.0.1",
+    "codecov" : "^3.5.0",
+    "cspell" : "5.14.0",
+    "cz-conventional-changelog" : "^3.3.0",
+    "debug" : "^4.3.3",
+    "dts-cli" : "^2.0.3",
+    "eslint" : "^7.8.0",
+    "eslint-config-prettier" : "^6.11.0",
+    "eslint-plugin-eslint-comments" : "^3.2.0",
+    "eslint-plugin-flowtype" : "^8.0.3",
+    "eslint-plugin-import" : "2.25.4",
+    "eslint-plugin-jsx-a11y" : "^6.7.1",
+    "eslint-plugin-prettier" : "^4.2.1",
+    "eslint-plugin-react" : "^7.32.2",
+    "eslint-plugin-react-hooks" : "^4.6.0",
+    "gh-pages" : "^5.0.0",
+    "google-datastore-emulator" : "^7.0.0",
+    "husky" : "^8.0.3",
+    "lint-staged" : "^13.2.3",
+    "npm-run-all" : "^4.1.5",
+    "nyc" : "^15.1.0",
+    "open-cli" : "7.2.0",
+    "prettier" : "^2.1.1",
+    "size-limit" : "^8.2.6",
+    "sort-package-json" : "^2.5.0",
+    "standard-version" : "^9.0.0",
+    "ts-essentials" : "9.3.2",
+    "ts-node" : "^10.4.0",
+    "tslib" : "^2.6.0",
+    "typedoc" : "0.24.8",
+    "typescript" : "^4.0.2",
+    "vitest" : "^0.32.2"
   },
-  "engines": {
-    "node": ">=16"
+  "engines" : {
+    "node" : ">=16"
   },
-  "files": [
-    "build/main",
-    "build/module",
-    "!**/*.spec.*",
-    "!**/*.json",
-    "CHANGELOG.md",
-    "LICENSE",
-    "README.md"
+  "files" : [
+    "dist",
+    "src"
   ],
-  "homepage": "http://github.com/mdornseif/datastore-api/",
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
+  "homepage" : "http://github.com/mdornseif/datastore-api/",
+  "husky" : {
+    "hooks" : {
+      "pre-commit" : "lint-staged"
     }
   },
-  "keywords": [
+  "keywords" : [
     "datastore",
     "google cloud"
   ],
-  "license": "MIT",
-  "lint-staged": {
-    "*{css,scss,md,markdown,json,yaml,yml,graphql,html}": "prettier -w",
-    "*{js,jsx,ts,tsx}": [
+  "license" : "MIT",
+  "lint-staged" : {
+    "*{css,scss,md,markdown,json,yaml,yml,graphql,html}" : "prettier -w",
+    "*{js,jsx,ts,tsx}" : [
       "prettier -w",
       "eslint --cache --fix"
     ],
-    "package*json": "sort-package-json"
+    "package*json" : "sort-package-json"
   },
-  "main": "build/main/index.js",
-  "module": "build/module/index.js",
-  "name": "datastore-api",
-  "nyc": {
-    "exclude": [
+  "main" : "dist/index.js",
+  "module" : "dist/datastore-api2.esm.js",
+  "name" : "datastore-api",
+  "nyc" : {
+    "exclude" : [
       "**/*.spec.js"
     ],
-    "extends": "@istanbuljs/nyc-config-typescript"
+    "extends" : "@istanbuljs/nyc-config-typescript"
   },
-  "peerDependencies": {
-    "@google-cloud/datastore": "7.3",
-    "debug": "^4.3.3"
+  "peerDependencies" : {
+    "@google-cloud/datastore" : "7.3",
+    "debug" : "^4.3.3"
   },
-  "prettier": {
-    "printWidth": 110,
-    "semi": false,
-    "singleQuote": true,
-    "trailingComma": "es5"
+  "prettier" : {
+    "printWidth" : 110,
+    "semi" : false,
+    "singleQuote" : true,
+    "trailingComma" : "es5"
   },
-  "release": {
-    "branches": [
+  "release" : {
+    "branches" : [
       "main",
       "master",
       "next"
     ]
   },
-  "repository": "https://github.com/mdornseif/datastore-api",
-  "scripts": {
-    "analyze": "size-limit --why",
-    "build": "dts build",
-    "lint": "dts lint",
-    "size": "size-limit",
-    "start": "dts watch",
-    "test": "vitest",
-    "unimported": "npx unimported; npx findead src",
-    "version": "standard-version"
+  "repository" : "https://github.com/mdornseif/datastore-api",
+  "scripts" : {
+    "analyze" : "size-limit --why",
+    "build" : "dts build",
+    "doc" : "typedoc src/lib/dstore-api.ts --exclude **/*.spec.ts --out build/docs",
+    "lint" : "dts lint",
+    "size" : "size-limit",
+    "start" : "dts watch",
+    "test" : "vitest",
+    "unimported" : "npx unimported; npx findead src",
+    "version" : "standard-version"
   },
-  "typings": "build/main/index.d.ts",
-  "version": "2.0.1"
+  "typings" : "dist/index.d.ts",
+  "version" : "2.0.1"
 }
