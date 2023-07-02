@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.2.0](https://github.com/mdornseif/datastore-api/compare/v2.0.1...v2.2.0) (2023-07-02)
+
+
+### Features
+
+* Add `Dstore.engine` identifier to allow debugging of nested stacks ([d5cba67](https://github.com/mdornseif/datastore-api/commit/d5cba6715a9e22e2cc5482347437f9b223be2c12))
+
+
+### Bug Fixes
+
+* **CI:** added missint `lint` target ([0e23765](https://github.com/mdornseif/datastore-api/commit/0e2376583c1ab5dbbaded31bcfc1800b4807eed6))
+* **CI:** use changed action for gcloud ([a7a280f](https://github.com/mdornseif/datastore-api/commit/a7a280fc32890ea5f6df18cc5b3dd9b869445ec2))
+* **deps:** eslint ([0386f25](https://github.com/mdornseif/datastore-api/commit/0386f25f492a4b1d0aebd2b71a13437a51e3dad2))
+* lint ([7f5cd36](https://github.com/mdornseif/datastore-api/commit/7f5cd36821e670b989e858482b751b4e74f1d4ef))
+* Moch-Datastore TS nags ([ee496be](https://github.com/mdornseif/datastore-api/commit/ee496be3b6fcf5fd3e574dde06dc3411e4facc75))
+* skip Tests with datastore-emulator ([f648718](https://github.com/mdornseif/datastore-api/commit/f6487189e3b9de912ad0b2b363b1a87e772b25e2))
+
 ### [2.0.1](https://github.com/mdornseif/datastore-api/compare/v2.0.0...v2.0.1) (2022-02-08)
 
 ## [2.0.0](https://github.com/mdornseif/datastore-api/compare/v1.7.4...v2.0.0) (2022-02-08)
