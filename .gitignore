@@ -10,3 +10,8 @@ package-lock.json
 .DS_Store
 *~
 dist
+
+.env*
+.flaskenv*
+!.env.project
+!.env.vault

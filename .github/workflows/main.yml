@@ -43,11 +43,19 @@ jobs:
       - name: Lint 🔍
         run: yarn lint
 
-      # - id: 'auth'
-      #   name: 'Authenticate to Google Cloud for Tests 🔓'
-      #   uses: 'google-github-actions/auth@v1'
-      #   with:
-      #     credentials_json: '${{ env.GCLOUD_SERVICE_KEY_RWTEST }}'
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud for Tests 🔓'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          credentials_json: '${{ env.GCLOUD_SERVICE_KEY_RWTEST }}'
+      - uses: 'google-github-actions/setup-gcloud@v1'
+      - name: Install GCloud beta 📦
+        shell: bash
+        run: gcloud components install beta --quiet
+      - name: Install cloud-datastore-emulator 📦
+        shell: bash
+        run: gcloud components install cloud-datastore-emulator --quiet
+
       - name: Test 🧪
         run: yarn test
 
