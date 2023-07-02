@@ -14,20 +14,20 @@ import { Dstore } from './dstore-api'
 process.env.GCLOUD_PROJECT = 'project-id' // Set the datastore project Id globally
 let emulator
 
-// beforeAll(async () => {
-//   emulator = new Emulator({ debug: false })
-//   await emulator.start()
-// })
+beforeAll(async () => {
+  emulator = new Emulator({ debug: false })
+  await emulator.start()
+})
 
-// afterAll(async () => {
-//   await emulator.stop()
-// })
+afterAll(async () => {
+  await emulator.stop()
+})
 
 function getDstore() {
   return new Dstore(new Datastore({ namespace: 'test', projectId: process.env.GCLOUD_PROJECT }))
 }
 
-test.skip('keySerialize', async () => {
+test('keySerialize', async () => {
   const kvStore = getDstore()
   assert.deepEqual(kvStore.key(['testYodel', 123]).path, ['testYodel', 123])
   assert.deepEqual(JSON.parse(JSON.stringify(kvStore.key(['testYodel', 123]))), {
@@ -51,7 +51,7 @@ test.skip('keySerialize', async () => {
   `)
 })
 
-describe.skip('Allocation', () => {
+describe('Allocation', () => {
   test('allocateIds', async () => {
     const kvStore = getDstore()
     const keys = await kvStore.datastore.allocateIds(kvStore.datastore.key(['testYodel']), 2)
@@ -72,7 +72,7 @@ describe.skip('Allocation', () => {
   })
 })
 
-describe.skip('Read', () => {
+describe('Read', () => {
   test('get num_id', async () => {
     const kvStore = getDstore()
     const entity = { key: kvStore.key(['testYodel', 2]), data: { foo: 'bar' } }
@@ -175,7 +175,7 @@ describe.skip('Read', () => {
   })
 })
 
-test.skip('get name', async (t) => {
+test('get name', async (t) => {
   const kvStore = getDstore()
   const entity = {
     key: kvStore.key(['testYodel', 'two']),
@@ -187,7 +187,7 @@ test.skip('get name', async (t) => {
   expect(result?.foo).toBe('bar')
 })
 
-describe.skip('query', async () => {
+describe('query', async () => {
   test('raw', async () => {
     const kvStore = getDstore()
     const entity = {
@@ -229,11 +229,14 @@ describe.skip('query', async () => {
     expect(saveResult).toMatchInlineSnapshot(`
       [
         {
+          "commitTime": null,
           "indexUpdates": 0,
           "mutationResults": [
             {
               "conflictDetected": false,
+              "createTime": null,
               "key": null,
+              "updateTime": null,
               "version": "5",
             },
           ],
@@ -306,7 +309,7 @@ describe.skip('query', async () => {
   })
 })
 
-test.skip('set', async () => {
+test('set', async () => {
   // expect.assertions(2);
   const kvStore = getDstore()
   const result = await kvStore.set(kvStore.key(['testYodel', '5e7']), {
@@ -320,7 +323,7 @@ test.skip('set', async () => {
   expect(result2.kind).toBe('testYodel')
 })
 
-test.skip('save / upsert', async () => {
+test('save / upsert', async () => {
   // expect.assertions(2);
   const kvStore = getDstore()
   const entity = {
@@ -335,7 +338,7 @@ test.skip('save / upsert', async () => {
   expect(entity.data[Datastore.KEY].kind).toBe('testYodel')
 })
 
-test.skip('update', async (t) => {
+test('update', async (t) => {
   //     expect.assertions(3);
   const kvStore = getDstore()
   const keyName = `4insert${Math.random()}`
@@ -353,7 +356,7 @@ test.skip('update', async (t) => {
   // expect(result?.[0]?.indexUpdates).toBe(2);
 })
 
-test.skip('insert / delete', async (t) => {
+test('insert / delete', async (t) => {
   // expect.assertions(2);
   const kvStore = getDstore()
   const testkey = kvStore.key(['testYodel', 4])
@@ -374,7 +377,7 @@ test.skip('insert / delete', async (t) => {
   expect(result2?.[0]?.mutationResults?.[0]?.conflictDetected).toBe(false)
 })
 
-test.skip('exception', async () => {
+test('exception', async () => {
   // expect.assertions(2);
   const kvStore = getDstore()
   try {

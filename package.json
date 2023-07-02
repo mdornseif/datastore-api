@@ -23,7 +23,6 @@
   },
   "description": "Simplified, more consitent API for Google Cloud Datastore",
   "devDependencies": {
-    "google-datastore-emulator": "^7.0.0",
     "@google-cloud/datastore": "7.3",
     "@google-cloud/promisify": "^3.0.1",
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
@@ -49,6 +48,7 @@
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "gh-pages": "^5.0.0",
+    "google-datastore-emulator": "^7.0.0",
     "husky": "^8.0.3",
     "lint-staged": "^13.2.3",
     "npm-run-all": "^4.1.5",
