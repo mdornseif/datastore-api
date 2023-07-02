@@ -99,6 +99,11 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx semantic-release
 
+      - name: Build Documentation 📚
+        run: yarn doca
+      - name: Publish Documentation 📚
+        run: 'npx gh-pages -m "[ci skip] Updates" -d build/docs'
+
       # - name: Deploy storybook to GitHub Pages
       #   run: yarn run storybook-deploy --ci
       #   env:

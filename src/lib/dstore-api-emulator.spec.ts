@@ -4,7 +4,7 @@
  * Created by Dr. Maximilian Dornseif 2021-12-10 in huwawi3backend 11.10.0
  * Copyright (c) 2021, 2023 Dr. Maximilian Dornseif
  */
-
+// @ts-nocheck
 import { Datastore, Key } from '@google-cloud/datastore'
 import Emulator from 'google-datastore-emulator'
 import { afterAll, assert, beforeAll, describe, expect, test } from 'vitest'
@@ -59,7 +59,7 @@ describe('Allocation', () => {
     expect(keys[0].length).toBe(2)
     expect(keys[0][0].kind).toBe('testYodel')
     expect(keys[0][0].id).toMatch(/\d+/)
-    expect(keys[1].keys.length).toBe(2)
+    expect(keys?.[1]?.keys?.length).toBe(2)
     expect(keys[1].keys[0].partitionId.namespaceId).toMatchInlineSnapshot('"test"')
     expect(keys[1].keys[0].path[0].idType).toMatchInlineSnapshot('"id"')
     expect(keys[1].keys[0].path[0].kind).toMatchInlineSnapshot('"testYodel"')
