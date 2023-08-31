@@ -100,7 +100,7 @@ jobs:
         run: npx semantic-release
 
       - name: Build Documentation 📚
-        run: yarn doca
+        run: yarn doc
       - name: Publish Documentation 📚
         run: 'npx gh-pages -m "[ci skip] Updates" -d build/docs'
 
