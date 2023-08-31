@@ -6,7 +6,7 @@
  * In future https://github.com/graphql/dataloader might be used for batching.
  *
  * Created by Dr. Maximillian Dornseif 2021-12-05 in huwawi3backend 11.10.0
- * Copyright (c) 2021, 2022 Dr. Maximillian Dornseif
+ * Copyright (c) 2021, 2022, 2023 Dr. Maximillian Dornseif
  */
 
 import { AsyncLocalStorage } from 'async_hooks'
@@ -396,6 +396,7 @@ export class Dstore implements IDstore {
         assertIsObject(e.data)
         this.fixKeys([e.data])
         e.excludeLargeProperties = e.excludeLargeProperties === undefined ? true : e.excludeLargeProperties
+        e.data = {...e.data, _keyStr: undefined}
       }
       ret = (await this.getDoT().save(entities)) || undefined
       for (const e of entities) {
@@ -423,6 +424,7 @@ export class Dstore implements IDstore {
    * For handling of incomplete [[Key]]s see [[save]].
    *
    * This function can be completely emulated by using [[save]] with `method: 'insert'` inside each [[DstoreSaveEntity]].
+   * Prefer using `save()` because it is much better tested.
    *
    *     await ds.insert([{key: ds.key(['testKind', 123]), entity: {data:' 123'}}])
    *
@@ -459,6 +461,7 @@ export class Dstore implements IDstore {
    * `update()` is idempotent. Updating the same [[Key]] twice is no error.
    *
    * This function can be completely emulated by using [[save]] with `method: 'update'` inside each [[DstoreSaveEntity]].
+   * Prefer using `save()` because it is much better tested.
    *
    * @throws [[DstoreError]]
    * @category Datastore Drop-In
