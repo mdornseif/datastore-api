@@ -78,3 +78,20 @@ server.get('/metrics', async (req, res) => {
 - Others
   - [google-cloud-kvstore](https://www.npmjs.com/package/google-cloud-kvstore)
   - [datastore-entity](https://github.com/aubrian-halili/datastore-entity#readme)
+- For debugging
+  - [dsadmin](https://github.com/remko/dsadmin) - `npx dsadmin --project=projectid`
+  - [google-datastore-emulator for node](https://github.com/ert78gb/google-datastore-emulator)
+
+  Setup your Tests like this:
+
+```
+child_process.execSync(`rm -Rf ./dsData`)
+const port = await getPort({ port: 8081 })
+emulator = new Emulator({ debug: false, port, storeOnDisk: true , clean: false, dataDir: './dsData'})
+```
+
+Then inspect datastore output with something like this:
+
+```
+/opt/homebrew/share/google-cloud-sdk/platform/cloud-datastore-emulator/cloud_datastore_emulator start --host=localhost --port=8081 --store_on_disk=True ./dsData & npx dsadmin --project=huwawi2
+```

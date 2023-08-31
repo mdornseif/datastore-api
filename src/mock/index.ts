@@ -231,7 +231,7 @@ export class Datastore extends OrigDatastore {
 
     if (query.filters.length === 0) {
       for (let [ks, entity] of filtered) {
-          reply.push(entity)
+        reply.push(entity)
       }
     }
 
@@ -240,7 +240,7 @@ export class Datastore extends OrigDatastore {
         const parent = filter.val.path.join('⭕️')
         for (let [ks, entity] of filtered) {
           const k = JSON.parse(ks)
-          if(k.path.join('⭕️').startsWith(parent)) {
+          if (k.path.join('⭕️').startsWith(parent)) {
             reply.push(entity)
           }
         }
@@ -269,7 +269,7 @@ export class Datastore extends OrigDatastore {
 
     // TODO: handle query.limit
 
-    setImmediate(() => callback(null, reply, {moreResults: 'MORE_RESULTS_AFTER_LIMIT'}))
+    setImmediate(() => callback(null, reply, { moreResults: 'MORE_RESULTS_AFTER_LIMIT' }))
   }
 
   merge(entities: Entities): Promise<CommitResponse>

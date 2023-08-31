@@ -396,7 +396,7 @@ export class Dstore implements IDstore {
         assertIsObject(e.data)
         this.fixKeys([e.data])
         e.excludeLargeProperties = e.excludeLargeProperties === undefined ? true : e.excludeLargeProperties
-        e.data = {...e.data, _keyStr: undefined}
+        e.data = { ...e.data, _keyStr: undefined }
       }
       ret = (await this.getDoT().save(entities)) || undefined
       for (const e of entities) {

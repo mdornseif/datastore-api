@@ -189,18 +189,17 @@ describe('Read', () => {
     expect(result6).toMatchInlineSnapshot('[]')
   })
 
-
-test('get name', async (t) => {
-  const kvStore = getDstore()
-  const entity = {
-    key: kvStore.key(['testYodel', 'two']),
-    data: { foo: 'bar' },
-  }
-  await kvStore.save([entity])
-  const result = await kvStore.get(entity.key)
-  expect(result?._keyStr).toMatchInlineSnapshot('"agByEgsSCXRlc3RZb2RlbCIDdHdvDKIBBHRlc3Q"')
-  expect(result?.foo).toBe('bar')
-})
+  test('get name', async (t) => {
+    const kvStore = getDstore()
+    const entity = {
+      key: kvStore.key(['testYodel', 'two']),
+      data: { foo: 'bar' },
+    }
+    await kvStore.save([entity])
+    const result = await kvStore.get(entity.key)
+    expect(result?._keyStr).toMatchInlineSnapshot('"agByEgsSCXRlc3RZb2RlbCIDdHdvDKIBBHRlc3Q"')
+    expect(result?.foo).toBe('bar')
+  })
 })
 describe('query', async () => {
   test.skip('raw', async () => {
