@@ -42,6 +42,29 @@ test('keySerialize', async () => {
     }
   `)
 })
+test('keyFromLegacyUrlsafe', async () => {
+  const kvStore = getDstore()
+  const ser = await kvStore.datastore.keyToLegacyUrlSafe(kvStore.key(['testYodel', 123]))
+  expect(ser).toMatchInlineSnapshot(`
+    [
+      "agpwcm9qZWN0LWlkcg8LEgl0ZXN0WW9kZWwYewyiAQR0ZXN0",
+    ]
+  `)
+
+  const key = kvStore.datastore.keyFromLegacyUrlsafe(ser[0])
+  expect(key).toMatchInlineSnapshot(`
+    Key {
+      "id": "123",
+      "kind": "testYodel",
+      "namespace": "test",
+      "path": [
+        "testYodel",
+        "123",
+      ],
+    }
+  `)
+  expect(kvStore.datastore.isKey(key)).toBeTruthy()
+})
 
 describe('Allocation', () => {
   test('allocateIds', async () => {
@@ -165,7 +188,7 @@ describe('Read', () => {
     // expect(Array.isArray(result)).toBeTruthy();
     expect(result6).toMatchInlineSnapshot('[]')
   })
-})
+
 
 test('get name', async (t) => {
   const kvStore = getDstore()
@@ -178,7 +201,7 @@ test('get name', async (t) => {
   expect(result?._keyStr).toMatchInlineSnapshot('"agByEgsSCXRlc3RZb2RlbCIDdHdvDKIBBHRlc3Q"')
   expect(result?.foo).toBe('bar')
 })
-
+})
 describe('query', async () => {
   test.skip('raw', async () => {
     const kvStore = getDstore()
@@ -210,7 +233,7 @@ describe('query', async () => {
     `)
   })
 
-  test.skip('query', async () => {
+  test('query', async () => {
     const kvStore = getDstore()
     const entity = {
       key: kvStore.key(['testYodel', '3']),
@@ -264,8 +287,29 @@ describe('query', async () => {
     query.limit(1)
     const [entities, runQueryInfo] = await kvStore.runQuery(query)
     // expect(entities.length).toBe(1)
-    expect(entities).toMatchInlineSnapshot()
-    expect(runQueryInfo).toMatchInlineSnapshot()
+    expect(entities).toMatchInlineSnapshot(`
+      [
+        {
+          "_keyStr": "agByEAsSCXRlc3RZb2RlbCIBMwyiAQR0ZXN0",
+          "baz": "baz",
+          "foo": "bar",
+          Symbol(KEY): Key {
+            "kind": "testYodel",
+            "name": "3",
+            "namespace": "test",
+            "path": [
+              "testYodel",
+              "3",
+            ],
+          },
+        },
+      ]
+    `)
+    expect(runQueryInfo).toMatchInlineSnapshot(`
+      {
+        "moreResults": "MORE_RESULTS_AFTER_LIMIT",
+      }
+    `)
     expect(entities?.[0]?.foo).toBe('bar')
     expect(entities?.[0]?.[Datastore.KEY]?.kind).toBe('testYodel')
     expect(runQueryInfo?.moreResults).toBe('MORE_RESULTS_AFTER_LIMIT')
@@ -274,7 +318,13 @@ describe('query', async () => {
     const [result2] = await kvStore.query('testYodel', [], 1, [], ['baz'])
     expect(result2.length).toBe(1)
     // foo is removed by selection
-    expect(JSON.parse(JSON.stringify(result2?.[0]))).toMatchInlineSnapshot()
+    expect(JSON.parse(JSON.stringify(result2?.[0]))).toMatchInlineSnapshot(`
+      {
+        "_keyStr": "agByEAsSCXRlc3RZb2RlbCIBMwyiAQR0ZXN0",
+        "baz": "baz",
+        "foo": "bar",
+      }
+    `)
 
     const key = kvStore.readKey(result2?.[0])
     expect(key.id).toBe(entity.key.id)
