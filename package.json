@@ -130,5 +130,5 @@
     "version": "standard-version"
   },
   "typings": "dist/index.d.ts",
-  "version": "2.2.2"
+  "version": "4.0.0"
 }
