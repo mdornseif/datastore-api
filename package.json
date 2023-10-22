@@ -18,12 +18,12 @@
     }
   },
   "dependencies": {
+    "@google-cloud/datastore": "^8.0.0",
     "assertate-debug": "^2.4.2",
     "prom-client": "^14.0.1"
   },
   "description": "Simplified, more consitent API for Google Cloud Datastore",
   "devDependencies": {
-    "@google-cloud/datastore": "7.3",
     "@google-cloud/promisify": "^3.0.1",
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@size-limit/preset-small-lib": "^8.2.6",
@@ -87,9 +87,9 @@
     "*{css,scss,md,markdown,json,yaml,yml,graphql,html}": "prettier -w",
     "*{js,jsx,ts,tsx}": [
       "prettier -w",
-      "eslint --cache --fix"
+      "yarn lint --fix"
     ],
-    "package*json": "sort-package-json"
+    "package.json": "sort-package-json"
   },
   "main": "dist/index.js",
   "module": "dist/datastore-api2.esm.js",
@@ -101,12 +101,11 @@
     "extends": "@istanbuljs/nyc-config-typescript"
   },
   "peerDependencies": {
-    "@google-cloud/datastore": "7.3",
     "debug": "^4.3.3"
   },
   "prettier": {
     "printWidth": 110,
-    "semi": false,
+    "semi": true,
     "singleQuote": true,
     "trailingComma": "es5"
   },
@@ -130,5 +129,6 @@
     "version": "standard-version"
   },
   "typings": "dist/index.d.ts",
-  "version": "2.2.2"
+  "version": "2.2.2",
+  "packageManager": "yarn@3.6.4+sha256.7f7d51b38db0d94adf25c512e3f3d3b47d23c97922eecc540f7440f116bdb99a"
 }

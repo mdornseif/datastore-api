@@ -12,7 +12,7 @@
 import { AsyncLocalStorage } from 'async_hooks'
 import { setImmediate } from 'timers/promises'
 
-import { Datastore, Key, PathType, Query, Transaction } from '@google-cloud/datastore'
+import { Datastore, Key, PathType, Query, Transaction, PropertyFilter } from '@google-cloud/datastore'
 import { Entity, entity } from '@google-cloud/datastore/build/src/entity'
 import { Operator, RunQueryInfo, RunQueryResponse } from '@google-cloud/datastore/build/src/query'
 import { CommitResponse } from '@google-cloud/datastore/build/src/request'
@@ -584,7 +584,7 @@ export class Dstore implements IDstore {
       for (const filterSpec of filters) {
         assertIsObject(filterSpec)
         // @ts-ignore
-        q.filter(...filterSpec)
+        q.filter(new PropertyFilter(...filterSpec))
       }
       for (const orderField of ordering) {
         q.order(orderField)
