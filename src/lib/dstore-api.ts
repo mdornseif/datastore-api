@@ -9,13 +9,13 @@
  * Copyright (c) 2021, 2022, 2023 Dr. Maximillian Dornseif
  */
 
-import { AsyncLocalStorage } from 'async_hooks'
-import { setImmediate } from 'timers/promises'
+import { AsyncLocalStorage } from 'async_hooks';
+import { setImmediate } from 'timers/promises';
 
-import { Datastore, Key, PathType, Query, Transaction, PropertyFilter } from '@google-cloud/datastore'
-import { Entity, entity } from '@google-cloud/datastore/build/src/entity'
-import { Operator, RunQueryInfo, RunQueryResponse } from '@google-cloud/datastore/build/src/query'
-import { CommitResponse } from '@google-cloud/datastore/build/src/request'
+import { Datastore, Key, PathType, Query, Transaction, PropertyFilter } from '@google-cloud/datastore';
+import { Entity, entity } from '@google-cloud/datastore/build/src/entity';
+import { Operator, RunQueryInfo, RunQueryResponse } from '@google-cloud/datastore/build/src/query';
+import { CommitResponse } from '@google-cloud/datastore/build/src/request';
 import {
   assert,
   assertIsArray,
@@ -23,44 +23,44 @@ import {
   assertIsNumber,
   assertIsObject,
   assertIsString,
-} from 'assertate-debug'
-import Debug from 'debug'
-import promClient from 'prom-client'
-import { Writable } from 'ts-essentials'
+} from 'assertate-debug';
+import Debug from 'debug';
+import promClient from 'prom-client';
+import { Writable } from 'ts-essentials';
 
 /** @ignore */
-export { Datastore, Key, PathType, Query, Transaction } from '@google-cloud/datastore'
+export { Datastore, Key, PathType, Query, Transaction } from '@google-cloud/datastore';
 
 /** @ignore */
-const debug = Debug('ds:api')
+const debug = Debug('ds:api');
 
 /** @ignore */
-const transactionAsyncLocalStorage = new AsyncLocalStorage()
+const transactionAsyncLocalStorage = new AsyncLocalStorage();
 
 /** @ignore */
 const metricHistogram = new promClient.Histogram({
   name: 'dstore_requests_seconds',
   help: 'How long did Datastore operations take?',
   labelNames: ['operation'],
-})
+});
 const metricFailureCounter = new promClient.Counter({
   name: 'dstore_failures_total',
   help: 'How many Datastore operations failed?',
   labelNames: ['operation'],
-})
+});
 
 /** Use instead of Datastore.KEY
  *
  * Even better: use `_key` instead.
  */
-export const KEYSYM = Datastore.KEY
+export const KEYSYM = Datastore.KEY;
 
-export type IGqlFilterTypes = boolean | string | number
+export type IGqlFilterTypes = boolean | string | number;
 
 export type IGqlFilterSpec = {
-  readonly eq: IGqlFilterTypes
-}
-export type TGqlFilterList = Array<[string, Operator, DstorePropertyValues]>
+  readonly eq: IGqlFilterTypes;
+};
+export type TGqlFilterList = Array<[string, Operator, DstorePropertyValues]>;
 
 /** Define what can be written into the Datastore */
 export type DstorePropertyValues =
@@ -73,11 +73,11 @@ export type DstorePropertyValues =
   | Buffer
   | Key
   | DstorePropertyValues[]
-  | { [key: string]: DstorePropertyValues }
+  | { [key: string]: DstorePropertyValues };
 
 export interface IDstoreEntryWithoutKey {
   /** All User Data stored in the Datastore */
-  [key: string]: DstorePropertyValues
+  [key: string]: DstorePropertyValues;
 }
 
 /** Represents what is actually stored inside the Datastore, called "Entity" by Google
@@ -85,41 +85,41 @@ export interface IDstoreEntryWithoutKey {
 */
 export interface IDstoreEntry extends IDstoreEntryWithoutKey {
   /* Datastore key provided by [@google-cloud/datastore](https://github.com/googleapis/nodejs-datastore#readme) */
-  readonly [Datastore.KEY]?: Key
+  readonly [Datastore.KEY]?: Key;
   /** [Datastore.KEY] key */
-  _keyStr: string
+  _keyStr: string;
   /** All User Data stored in the Datastore */
-  [key: string]: DstorePropertyValues
+  [key: string]: DstorePropertyValues;
 }
 
 /** Represents the thing you pass to the save method. Also called "Entity" by Google */
 export type DstoreSaveEntity = {
-  key: Key
+  key: Key;
   data: Omit<IDstoreEntry, '_keyStr' | Datastore['KEY']> &
     Partial<{
-      _keyStr: string
-      [Datastore.KEY]: Key
-    }>
-  method?: 'insert' | 'update' | 'upsert'
-  excludeLargeProperties?: boolean
-  excludeFromIndexes?: readonly string[]
-}
+      _keyStr: string;
+      [Datastore.KEY]: Key;
+    }>;
+  method?: 'insert' | 'update' | 'upsert';
+  excludeLargeProperties?: boolean;
+  excludeFromIndexes?: readonly string[];
+};
 
 type IDstore = {
   /** Accessible by Users of the library. Keep in mind that you will access outside transactions created by [[runInTransaction]]. */
-  readonly datastore: Datastore
-  key: (path: ReadonlyArray<PathType>) => Key
-  keyFromSerialized: (text: string) => Key
-  keySerialize: (key: Key) => string
-  readKey: (entry: IDstoreEntry) => Key
-  get: (key: Key) => Promise<IDstoreEntry | null>
-  getMulti: (keys: ReadonlyArray<Key>) => Promise<ReadonlyArray<IDstoreEntry | null>>
-  set: (key: Key, entry: IDstoreEntry) => Promise<Key>
-  save: (entities: readonly DstoreSaveEntity[]) => Promise<CommitResponse | undefined>
-  insert: (entities: readonly DstoreSaveEntity[]) => Promise<CommitResponse | undefined>
-  update: (entities: readonly DstoreSaveEntity[]) => Promise<CommitResponse | undefined>
-  delete: (keys: readonly Key[]) => Promise<CommitResponse | undefined>
-  createQuery: (kind: string) => Query
+  readonly datastore: Datastore;
+  key: (path: ReadonlyArray<PathType>) => Key;
+  keyFromSerialized: (text: string) => Key;
+  keySerialize: (key: Key) => string;
+  readKey: (entry: IDstoreEntry) => Key;
+  get: (key: Key) => Promise<IDstoreEntry | null>;
+  getMulti: (keys: ReadonlyArray<Key>) => Promise<ReadonlyArray<IDstoreEntry | null>>;
+  set: (key: Key, entry: IDstoreEntry) => Promise<Key>;
+  save: (entities: readonly DstoreSaveEntity[]) => Promise<CommitResponse | undefined>;
+  insert: (entities: readonly DstoreSaveEntity[]) => Promise<CommitResponse | undefined>;
+  update: (entities: readonly DstoreSaveEntity[]) => Promise<CommitResponse | undefined>;
+  delete: (keys: readonly Key[]) => Promise<CommitResponse | undefined>;
+  createQuery: (kind: string) => Query;
   query: (
     kind: string,
     filters?: TGqlFilterList,
@@ -127,11 +127,11 @@ type IDstore = {
     ordering?: readonly string[],
     selection?: readonly string[],
     cursor?: string
-  ) => Promise<RunQueryResponse>
-  runQuery: (query: Query | Omit<Query, 'run'>) => Promise<RunQueryResponse>
-  allocateOneId: (kindName: string) => Promise<string>
-  runInTransaction: <T>(func: { (): Promise<T>; (): T }) => Promise<T>
-}
+  ) => Promise<RunQueryResponse>;
+  runQuery: (query: Query | Omit<Query, 'run'>) => Promise<RunQueryResponse>;
+  allocateOneId: (kindName: string) => Promise<string>;
+  runInTransaction: <T>(func: { (): Promise<T>; (): T }) => Promise<T>;
+};
 
 /** Dstore implements a slightly more accessible version of the [Google Cloud Datastore: Node.js Client](https://cloud.google.com/nodejs/docs/reference/datastore/latest)
 
@@ -157,9 +157,9 @@ Main differences:
 This documentation also tries to document the little known idiosyncrasies of the [@google-cloud/datastore](https://github.com/googleapis/nodejs-datastore) library. See the corresponding functions.
 */
 export class Dstore implements IDstore {
-  engine = 'Dstore'
-  engines: string[] = []
-  private readonly urlSaveKey = new entity.URLSafeKey()
+  engine = 'Dstore';
+  engines: string[] = [];
+  private readonly urlSaveKey = new entity.URLSafeKey();
 
   /** Generate a Dstore instance for a specific [[Datastore]] instance.
 
@@ -177,13 +177,13 @@ export class Dstore implements IDstore {
   ```
   */
   constructor(readonly datastore: Datastore, readonly projectId?: string, readonly logger?: string) {
-    assertIsObject(datastore)
-    this.engines.push(this.engine)
+    assertIsObject(datastore);
+    this.engines.push(this.engine);
   }
 
   /** Gets the Datastore or the current Transaction. */
   private getDoT(): Transaction | Datastore {
-    return (transactionAsyncLocalStorage.getStore() as Transaction) || this.datastore
+    return (transactionAsyncLocalStorage.getStore() as Transaction) || this.datastore;
   }
 
   /** `key()` creates a [[Key]] Object from a path.
@@ -195,7 +195,7 @@ export class Dstore implements IDstore {
    * @category Datastore Drop-In
    */
   key(path: readonly PathType[]): Key {
-    return this.datastore.key(path as Writable<typeof path>)
+    return this.datastore.key(path as Writable<typeof path>);
   }
 
   /** `keyFromSerialized()` serializes [[Key]] to a string.
@@ -207,7 +207,7 @@ export class Dstore implements IDstore {
    * @category Datastore Drop-In
    */
   keySerialize(key: Key): string {
-    return key ? this.urlSaveKey.legacyEncode(this.projectId ?? '', key) : ''
+    return key ? this.urlSaveKey.legacyEncode(this.projectId ?? '', key) : '';
   }
 
   /** `keyFromSerialized()` deserializes a string created with [[keySerialize]] to a [[Key]].
@@ -217,7 +217,7 @@ export class Dstore implements IDstore {
    * @category Datastore Drop-In
    */
   keyFromSerialized(text: string): Key {
-    return this.urlSaveKey.legacyDecode(text)
+    return this.urlSaveKey.legacyDecode(text);
   }
 
   /** `readKey()` extracts the [[Key]] from an [[IDstoreEntry]].
@@ -228,17 +228,17 @@ export class Dstore implements IDstore {
    * @category Additional
    */
   readKey(ent: IDstoreEntry): Key {
-    assertIsObject(ent)
-    let ret = ent[Datastore.KEY]
+    assertIsObject(ent);
+    let ret = ent[Datastore.KEY];
     if (ent._keyStr && !ret) {
-      ret = this.keyFromSerialized(ent._keyStr)
+      ret = this.keyFromSerialized(ent._keyStr);
     }
     assertIsObject(
       ret,
       'entity[Datastore.KEY]/entity._keyStr',
       `Entity is missing the datastore Key: ${JSON.stringify(ent)}`
-    )
-    return ret
+    );
+    return ret;
   }
 
   /** `fixKeys()` is called for all [[IDstoreEntry]]sa returned from [[Dstore]].
@@ -252,13 +252,13 @@ export class Dstore implements IDstore {
   ): Array<IDstoreEntry | undefined> {
     entities.forEach((x) => {
       if (!!x?.[Datastore.KEY] && x[Datastore.KEY]) {
-        assertIsDefined(x[Datastore.KEY])
-        assertIsObject(x[Datastore.KEY])
+        assertIsDefined(x[Datastore.KEY]);
+        assertIsObject(x[Datastore.KEY]);
         // Old TypesScript has problems with symbols as a property
-        x._keyStr = this.keySerialize(x[Datastore.KEY] as Key)
+        x._keyStr = this.keySerialize(x[Datastore.KEY] as Key);
       }
-    })
-    return entities as Array<IDstoreEntry | undefined>
+    });
+    return entities as Array<IDstoreEntry | undefined>;
   }
 
   /** `get()` reads a [[IDstoreEntry]] from the Datastore.
@@ -277,11 +277,11 @@ export class Dstore implements IDstore {
    * @category Datastore Drop-In
    */
   async get(key: Key): Promise<IDstoreEntry | null> {
-    assertIsObject(key)
-    assert(!Array.isArray(key))
-    assert(key.path.length % 2 == 0, `key.path must be complete: ${JSON.stringify(key.path)}`)
-    const result = await this.getMulti([key])
-    return result?.[0] || null
+    assertIsObject(key);
+    assert(!Array.isArray(key));
+    assert(key.path.length % 2 == 0, `key.path must be complete: ${JSON.stringify(key.path)}`);
+    const result = await this.getMulti([key]);
+    return result?.[0] || null;
   }
 
   /** `getMulti()` reads several [[IDstoreEntry]]s from the Datastore.
@@ -303,28 +303,28 @@ export class Dstore implements IDstore {
    */
   async getMulti(keys: readonly Key[]): Promise<Array<IDstoreEntry | null>> {
     // assertIsArray(keys);
-    let results: (IDstoreEntry | null | undefined)[]
-    const metricEnd = metricHistogram.startTimer()
+    let results: (IDstoreEntry | null | undefined)[];
+    const metricEnd = metricHistogram.startTimer();
     try {
       results = this.fixKeys(
         keys.length > 0 ? (await this.getDoT().get(keys as Writable<typeof keys>))?.[0] : []
-      )
+      );
     } catch (error) {
-      metricFailureCounter.inc({ operation: 'get' })
-      await setImmediate()
-      throw new DstoreError('datastore.getMulti error', error as Error, { keys })
+      metricFailureCounter.inc({ operation: 'get' });
+      await setImmediate();
+      throw new DstoreError('datastore.getMulti error', error as Error, { keys });
     } finally {
-      metricEnd({ operation: 'get' })
+      metricEnd({ operation: 'get' });
     }
 
     // Sort resulting entities by the keys they were requested with.
-    assertIsArray(results)
-    const entities = results as IDstoreEntry[]
-    const entitiesByKey: Record<string, IDstoreEntry> = {}
+    assertIsArray(results);
+    const entities = results as IDstoreEntry[];
+    const entitiesByKey: Record<string, IDstoreEntry> = {};
     entities.forEach((entity) => {
-      entitiesByKey[JSON.stringify(entity[Datastore.KEY])] = entity
-    })
-    return keys.map((key) => entitiesByKey[JSON.stringify(key)] || null)
+      entitiesByKey[JSON.stringify(entity[Datastore.KEY])] = entity;
+    });
+    return keys.map((key) => entitiesByKey[JSON.stringify(key)] || null);
   }
 
   /** `set()` is addition to [[Datastore]]. It provides a classic Key-value Interface.
@@ -344,11 +344,11 @@ export class Dstore implements IDstore {
    * @category Additional
    */
   async set(key: Key, data: IDstoreEntryWithoutKey): Promise<Key> {
-    assertIsObject(key)
-    assertIsObject(data)
-    const saveEntity = { key, data }
-    await this.save([saveEntity])
-    return saveEntity.key
+    assertIsObject(key);
+    assertIsObject(data);
+    const saveEntity = { key, data };
+    await this.save([saveEntity]);
+    return saveEntity.key;
   }
 
   /** `save()` is compatible to [Datastore.save()](https://cloud.google.com/nodejs/docs/reference/datastore/latest/datastore/datastore#_google_cloud_datastore_Datastore_save_member_1_).
@@ -385,32 +385,32 @@ export class Dstore implements IDstore {
    * @category Datastore Drop-In
    */
   async save(entities: readonly DstoreSaveEntity[]): Promise<CommitResponse | undefined> {
-    assertIsArray(entities)
-    let ret: CommitResponse | undefined
-    const metricEnd = metricHistogram.startTimer()
+    assertIsArray(entities);
+    let ret: CommitResponse | undefined;
+    const metricEnd = metricHistogram.startTimer();
     try {
       // Within Transaction we don't get any answer here!
       // [ { mutationResults: [ [Object], [Object] ], indexUpdates: 51 } ]
       for (const e of entities) {
-        assertIsObject(e.key)
-        assertIsObject(e.data)
-        this.fixKeys([e.data])
-        e.excludeLargeProperties = e.excludeLargeProperties === undefined ? true : e.excludeLargeProperties
-        e.data = { ...e.data, _keyStr: undefined }
+        assertIsObject(e.key);
+        assertIsObject(e.data);
+        this.fixKeys([e.data]);
+        e.excludeLargeProperties = e.excludeLargeProperties === undefined ? true : e.excludeLargeProperties;
+        e.data = { ...e.data, _keyStr: undefined };
       }
-      ret = (await this.getDoT().save(entities)) || undefined
+      ret = (await this.getDoT().save(entities)) || undefined;
       for (const e of entities) {
-        e.data[Datastore.KEY] = e.key
-        this.fixKeys([e.data])
+        e.data[Datastore.KEY] = e.key;
+        this.fixKeys([e.data]);
       }
     } catch (error) {
-      metricFailureCounter.inc({ operation: 'save' })
-      await setImmediate()
-      throw new DstoreError('datastore.save error', error as Error)
+      metricFailureCounter.inc({ operation: 'save' });
+      await setImmediate();
+      throw new DstoreError('datastore.save error', error as Error);
     } finally {
-      metricEnd({ operation: 'save' })
+      metricEnd({ operation: 'save' });
     }
-    return ret
+    return ret;
   }
 
   /** `insert()` is compatible to [Datastore.insert()](https://cloud.google.com/nodejs/docs/reference/datastore/latest/datastore/datastore#_google_cloud_datastore_Datastore_insert_member_1_).
@@ -432,20 +432,20 @@ export class Dstore implements IDstore {
    * @category Datastore Drop-In
    */
   async insert(entities: readonly DstoreSaveEntity[]): Promise<CommitResponse | undefined> {
-    assertIsArray(entities)
-    let ret: CommitResponse | undefined
-    const metricEnd = metricHistogram.startTimer()
+    assertIsArray(entities);
+    let ret: CommitResponse | undefined;
+    const metricEnd = metricHistogram.startTimer();
     try {
-      ret = (await this.getDoT().insert(entities)) || undefined
+      ret = (await this.getDoT().insert(entities)) || undefined;
     } catch (error) {
       // console.error(error)
-      metricFailureCounter.inc({ operation: 'insert' })
-      await setImmediate()
-      throw new DstoreError('datastore.insert error', error as Error)
+      metricFailureCounter.inc({ operation: 'insert' });
+      await setImmediate();
+      throw new DstoreError('datastore.insert error', error as Error);
     } finally {
-      metricEnd({ operation: 'insert' })
+      metricEnd({ operation: 'insert' });
     }
-    return ret
+    return ret;
   }
 
   /** `update()` is compatible to [Datastore.update()](https://cloud.google.com/nodejs/docs/reference/datastore/latest/datastore/datastore#_google_cloud_datastore_Datastore_update_member_1_).
@@ -467,29 +467,29 @@ export class Dstore implements IDstore {
    * @category Datastore Drop-In
    */
   async update(entities: readonly DstoreSaveEntity[]): Promise<CommitResponse | undefined> {
-    assertIsArray(entities)
+    assertIsArray(entities);
 
-    entities.forEach((entity) => assertIsObject(entity.key))
+    entities.forEach((entity) => assertIsObject(entity.key));
     entities.forEach((entity) =>
       assert(
         entity.key.path.length % 2 == 0,
         `entity.key.path must be complete: ${JSON.stringify([entity.key.path, entity])}`
       )
-    )
-    let ret: CommitResponse | undefined
-    const metricEnd = metricHistogram.startTimer()
+    );
+    let ret: CommitResponse | undefined;
+    const metricEnd = metricHistogram.startTimer();
 
     try {
-      ret = (await this.getDoT().update(entities)) || undefined
+      ret = (await this.getDoT().update(entities)) || undefined;
     } catch (error) {
       // console.error(error)
-      metricFailureCounter.inc({ operation: 'update' })
-      await setImmediate()
-      throw new DstoreError('datastore.update error', error as Error)
+      metricFailureCounter.inc({ operation: 'update' });
+      await setImmediate();
+      throw new DstoreError('datastore.update error', error as Error);
     } finally {
-      metricEnd({ operation: 'update' })
+      metricEnd({ operation: 'update' });
     }
-    return ret
+    return ret;
   }
 
   /** `delete()` is compatible to [Datastore.delete()].
@@ -506,23 +506,23 @@ export class Dstore implements IDstore {
    * @category Datastore Drop-In
    */
   async delete(keys: readonly Key[]): Promise<CommitResponse | undefined> {
-    assertIsArray(keys)
-    keys.forEach((key) => assertIsObject(key))
+    assertIsArray(keys);
+    keys.forEach((key) => assertIsObject(key));
     keys.forEach((key) =>
       assert(key.path.length % 2 == 0, `key.path must be complete: ${JSON.stringify(key.path)}`)
-    )
-    let ret
-    const metricEnd = metricHistogram.startTimer()
+    );
+    let ret;
+    const metricEnd = metricHistogram.startTimer();
     try {
-      ret = (await this.getDoT().delete(keys)) || undefined
+      ret = (await this.getDoT().delete(keys)) || undefined;
     } catch (error) {
-      metricFailureCounter.inc({ operation: 'delete' })
-      await setImmediate()
-      throw new DstoreError('datastore.delete error', error as Error)
+      metricFailureCounter.inc({ operation: 'delete' });
+      await setImmediate();
+      throw new DstoreError('datastore.delete error', error as Error);
     } finally {
-      metricEnd({ operation: 'delete' })
+      metricEnd({ operation: 'delete' });
     }
-    return ret
+    return ret;
   }
 
   /** `createQuery()` creates an "empty" [[Query]] Object.
@@ -535,25 +535,25 @@ export class Dstore implements IDstore {
    */
   createQuery(kindName: string): Query {
     try {
-      return this.getDoT().createQuery(kindName)
+      return this.getDoT().createQuery(kindName);
     } catch (error) {
-      throw new DstoreError('datastore.createQuery error', error as Error)
+      throw new DstoreError('datastore.createQuery error', error as Error);
     }
   }
 
   async runQuery(query: Query | Omit<Query, 'run'>): Promise<RunQueryResponse> {
-    let ret
-    const metricEnd = metricHistogram.startTimer()
+    let ret;
+    const metricEnd = metricHistogram.startTimer();
     try {
-      const [entities, info]: [Entity[], RunQueryInfo] = await this.getDoT().runQuery(query as Query)
-      ret = [this.fixKeys(entities), info]
+      const [entities, info]: [Entity[], RunQueryInfo] = await this.getDoT().runQuery(query as Query);
+      ret = [this.fixKeys(entities), info];
     } catch (error) {
-      await setImmediate()
-      throw new DstoreError('datastore.runQuery error', error as Error)
+      await setImmediate();
+      throw new DstoreError('datastore.runQuery error', error as Error);
     } finally {
-      metricEnd({ operation: 'query' })
+      metricEnd({ operation: 'query' });
     }
-    return ret as RunQueryResponse
+    return ret as RunQueryResponse;
   }
 
   /** `query()` combined [[createQuery]] and [[runQuery]] in a single call.
@@ -576,34 +576,34 @@ export class Dstore implements IDstore {
     selection: readonly string[] = [],
     cursor?: string
   ): Promise<RunQueryResponse> {
-    assertIsString(kindName)
-    assertIsArray(filters)
-    assertIsNumber(limit)
+    assertIsString(kindName);
+    assertIsArray(filters);
+    assertIsNumber(limit);
     try {
-      const q = this.createQuery(kindName)
+      const q = this.createQuery(kindName);
       for (const filterSpec of filters) {
-        assertIsObject(filterSpec)
+        assertIsObject(filterSpec);
         // @ts-ignore
-        q.filter(new PropertyFilter(...filterSpec))
+        q.filter(new PropertyFilter(...filterSpec));
       }
       for (const orderField of ordering) {
-        q.order(orderField)
+        q.order(orderField);
       }
       if (limit > 0) {
-        q.limit(limit)
+        q.limit(limit);
       }
       if (selection.length > 0) {
-        q.select(selection as any)
+        q.select(selection as any);
       }
-      return await this.runQuery(q)
+      return await this.runQuery(q);
     } catch (error) {
-      await setImmediate()
+      await setImmediate();
       throw new DstoreError('datastore.query error', error as Error, {
         kindName,
         filters,
         limit,
         ordering,
-      })
+      });
     }
   }
 
@@ -619,10 +619,10 @@ export class Dstore implements IDstore {
    * In fact the generated ID is namespaced via an incomplete [[Key]] of the given Kind.
    */
   async allocateOneId(kindName = 'Numbering'): Promise<string> {
-    assertIsString(kindName)
-    const ret = (await this.datastore.allocateIds(this.key([kindName]), 1))[0][0].id
-    assertIsString(ret)
-    return ret
+    assertIsString(kindName);
+    const ret = (await this.datastore.allocateIds(this.key([kindName]), 1))[0][0].id;
+    assertIsString(ret);
+    return ret;
   }
 
   /** This tries to give high level access to transactions.
@@ -640,27 +640,27 @@ export class Dstore implements IDstore {
     Most Applications today are running on "Firestore in Datastore Mode". Beware that the Datastore-Emulator fails with `error: 3 INVALID_ARGUMENT: Only ancestor queries are allowed inside transactions.` during [[runQuery]] while the Datastore on Google Infrastructure does not have such an restriction anymore as of 2022.
     */
   async runInTransaction<T>(func: () => Promise<T>): Promise<T> {
-    let ret
-    const transaction: Transaction = this.datastore.transaction()
+    let ret;
+    const transaction: Transaction = this.datastore.transaction();
     await transactionAsyncLocalStorage.run(transaction, async () => {
-      const [transactionInfo, transactionRunApiResponse] = await transaction.run()
-      let commitApiResponse
+      const [transactionInfo, transactionRunApiResponse] = await transaction.run();
+      let commitApiResponse;
       try {
-        ret = await func()
+        ret = await func();
       } catch (error) {
-        const rollbackInfo = await transaction.rollback()
+        const rollbackInfo = await transaction.rollback();
         debug(
           'Transaction failed, rollback initiated: %O  %O %O %O',
           transactionInfo,
           transactionRunApiResponse,
           rollbackInfo,
           error
-        )
-        await setImmediate()
-        throw new DstoreError('datastore.transaction execution error', error as Error)
+        );
+        await setImmediate();
+        throw new DstoreError('datastore.transaction execution error', error as Error);
       }
       try {
-        commitApiResponse = (await transaction.commit())[0]
+        commitApiResponse = (await transaction.commit())[0];
       } catch (error) {
         debug(
           'Transaction commit failed: %O %O %O %O ret: %O',
@@ -669,36 +669,36 @@ export class Dstore implements IDstore {
           commitApiResponse,
           error,
           ret
-        )
-        await setImmediate()
-        throw new DstoreError('datastore.transaction execution error', error as Error)
+        );
+        await setImmediate();
+        throw new DstoreError('datastore.transaction execution error', error as Error);
       }
-    })
-    return ret as T
+    });
+    return ret as T;
   }
 }
 
 export class DstoreError extends Error {
-  public readonly extensions: Record<string, unknown>
+  public readonly extensions: Record<string, unknown>;
   public readonly originalError: Error | undefined;
-  readonly [key: string]: unknown
+  readonly [key: string]: unknown;
 
   constructor(message: string, originalError: Error | undefined, extensions?: Record<string, unknown>) {
-    super(`${message}: ${originalError?.message}`)
+    super(`${message}: ${originalError?.message}`);
 
     // if no name provided, use the default. defineProperty ensures that it stays non-enumerable
     if (!this.name) {
-      Object.defineProperty(this, 'name', { value: 'DstoreError' })
+      Object.defineProperty(this, 'name', { value: 'DstoreError' });
     }
     // metadata: Metadata { internalRepr: Map(0) {}, options: {} },
-    this.originalError = originalError
-    this.extensions = { ...extensions }
+    this.originalError = originalError;
+    this.extensions = { ...extensions };
     this.stack =
       (this.stack?.split('\n')[0] || '') +
       '\n' +
       (originalError?.stack?.split('\n')?.slice(1)?.join('\n') || '') +
       '\n' +
-      (this.stack?.split('\n')?.slice(1)?.join('\n') || '')
+      (this.stack?.split('\n')?.slice(1)?.join('\n') || '');
 
     // These are usually present on Datastore Errors
     // logger.error({ err: originalError, extensions }, message);

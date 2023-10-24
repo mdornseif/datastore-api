@@ -17,4 +17,4 @@ export default {
   '<=': (a, b) => a >= b,
   // @ts-ignore
   '=': (a, b) => a === b,
-}
+};
