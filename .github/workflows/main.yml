@@ -41,7 +41,7 @@ jobs:
           cache: 'yarn'
 
       - name: Install dependencies 📦
-        run: yarn install --frozen-lockfile  --prefer-offline
+        run: yarn install --prefer-offline
 
       - name: Lint 🔍
         run: yarn lint
@@ -86,7 +86,7 @@ jobs:
 
       - name: Install dependencies 📦
         # run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.NODE_AUTH_TOKEN }}" >> ~/.npmrc
-        run: yarn install --frozen-lockfile  --prefer-offline
+        run: yarn install --prefer-offline
 
       - name: Build 🏗
         # run: yarn prepare
