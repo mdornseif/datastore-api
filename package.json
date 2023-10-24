@@ -129,6 +129,6 @@
     "version": "standard-version"
   },
   "typings": "dist/index.d.ts",
-  "version": "4.0.1",
+  "version": "4.0.0",
   "packageManager": "yarn@3.6.4+sha256.7f7d51b38db0d94adf25c512e3f3d3b47d23c97922eecc540f7440f116bdb99a"
 }

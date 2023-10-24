@@ -2,6 +2,39 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.0](https://github.com/mdornseif/datastore-api/compare/v2.0.1...v4.0.0) (2023-10-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* if you relied on _keyStr in the Datastore.
+
+### Features
+
+* Add `Dstore.engine` identifier to allow debugging of nested stacks ([d5cba67](https://github.com/mdornseif/datastore-api/commit/d5cba6715a9e22e2cc5482347437f9b223be2c12))
+* Do not save _keyStr to Datastore ([909a4c9](https://github.com/mdornseif/datastore-api/commit/909a4c91a0c43d15b7ca299796256839de7861f8))
+* **docs:** Automatically Publish Documentation on new releases ([3cea768](https://github.com/mdornseif/datastore-api/commit/3cea76874e355a2f1df38d156d5d5cac264971c7))
+* test against datastore-emulator ([65b000a](https://github.com/mdornseif/datastore-api/commit/65b000abe0f077c9220f377beb3003d33542975f))
+* **Tests:** Test against the real cloud firestore / datastore ([8f28a4c](https://github.com/mdornseif/datastore-api/commit/8f28a4c23bdef1768be2732d37882030aff1d5ee))
+* use @google-cloud/datastore 8.x PropertyFilter ([371da2a](https://github.com/mdornseif/datastore-api/commit/371da2a96712ffdf24bbc69e27acf2740078efbe))
+
+
+### Bug Fixes
+
+* **build:** export correct modules ([ff117b4](https://github.com/mdornseif/datastore-api/commit/ff117b42bc36585776d300e8cf84484a8838c633))
+* bump version ([544c6ce](https://github.com/mdornseif/datastore-api/commit/544c6cef6ca5c6ee05f88e4914faaccaee3d7eca))
+* **CI:** added missint `lint` target ([0e23765](https://github.com/mdornseif/datastore-api/commit/0e2376583c1ab5dbbaded31bcfc1800b4807eed6))
+* **CI:** Google-Auth ([2357580](https://github.com/mdornseif/datastore-api/commit/23575803e608b005e0d9a5ae30c5f79b89b5e45e))
+* **CI:** use changed action for gcloud ([a7a280f](https://github.com/mdornseif/datastore-api/commit/a7a280fc32890ea5f6df18cc5b3dd9b869445ec2))
+* datastore.simulator handling queries without filters ([13bedcb](https://github.com/mdornseif/datastore-api/commit/13bedcb9869473af03806f2d8c33c69ce0095a82))
+* **deps:** eslint ([0386f25](https://github.com/mdornseif/datastore-api/commit/0386f25f492a4b1d0aebd2b71a13437a51e3dad2))
+* https://github.com/mdornseif/datastore-api/releases/tag/v2.1.0 ([80ec1b0](https://github.com/mdornseif/datastore-api/commit/80ec1b0a4254bd30c51e204163abaabf70a23415))
+* lint ([7f5cd36](https://github.com/mdornseif/datastore-api/commit/7f5cd36821e670b989e858482b751b4e74f1d4ef))
+* Moch-Datastore TS nags ([ee496be](https://github.com/mdornseif/datastore-api/commit/ee496be3b6fcf5fd3e574dde06dc3411e4facc75))
+* recent version for npm ([1f7c044](https://github.com/mdornseif/datastore-api/commit/1f7c044af2994da2c167db46521a9ee7c1b8fccd))
+* skip Tests with datastore-emulator ([f648718](https://github.com/mdornseif/datastore-api/commit/f6487189e3b9de912ad0b2b363b1a87e772b25e2))
+* Version bump ([537fe03](https://github.com/mdornseif/datastore-api/commit/537fe03e39265854fd9e4125c85e5b8b0a757bb1))
+
 ### [2.0.1](https://github.com/mdornseif/datastore-api/compare/v2.0.0...v2.0.1) (2022-02-08)
 
 ## [2.0.0](https://github.com/mdornseif/datastore-api/compare/v1.7.4...v2.0.0) (2022-02-08)
