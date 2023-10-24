@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.0.3](https://github.com/mdornseif/datastore-api/compare/v4.0.1...v4.0.3) (2023-10-24)
+
+
+### Bug Fixes
+
+* automatic releases ([2789ec1](https://github.com/mdornseif/datastore-api/commit/2789ec16d72935cf2aa9168e2359a41c9b2a408a))
+
 ## [4.0.0](https://github.com/mdornseif/datastore-api/compare/v2.0.1...v4.0.0) (2023-10-24)
 
 
