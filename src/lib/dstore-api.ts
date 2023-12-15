@@ -2,6 +2,7 @@
  * dstore.ts - Datastore Compatibility layer
  * Try to get a smoother api for transactions and such.
  * A little bit inspired by the Python2 ndb interface.
+ * But without the ORM bits.
  *
  * In future https://github.com/graphql/dataloader might be used for batching.
  *
@@ -77,19 +78,17 @@ export type DstorePropertyValues =
 
 export interface IDstoreEntryWithoutKey {
   /** All User Data stored in the Datastore */
-  [key: string]: DstorePropertyValues;
+  [key: string]?: DstorePropertyValues;
 }
 
 /** Represents what is actually stored inside the Datastore, called "Entity" by Google
     [@google-cloud/datastore](https://github.com/googleapis/nodejs-datastore#readme) adds `[Datastore.KEY]`. Using ES6 Symbols presents all kinds of hurdles, especially when you try to serialize into a cache. So we add the property _keyStr which contains the encoded key. It is automatically used to reconstruct `[Datastore.KEY]`, if you use [[Dstore.readKey]].
 */
 export interface IDstoreEntry extends IDstoreEntryWithoutKey {
-  /* Datastore key provided by [@google-cloud/datastore](https://github.com/googleapis/nodejs-datastore#readme) */
+  /* Datastore Key provided by [@google-cloud/datastore](https://github.com/googleapis/nodejs-datastore#readme) */
   readonly [Datastore.KEY]?: Key;
   /** [Datastore.KEY] key */
   _keyStr: string;
-  /** All User Data stored in the Datastore */
-  [key: string]: DstorePropertyValues;
 }
 
 /** Represents the thing you pass to the save method. Also called "Entity" by Google */
@@ -97,7 +96,7 @@ export type DstoreSaveEntity = {
   key: Key;
   data: Omit<IDstoreEntry, '_keyStr' | Datastore['KEY']> &
     Partial<{
-      _keyStr: string;
+      _keyStr: string|undefined;
       [Datastore.KEY]: Key;
     }>;
   method?: 'insert' | 'update' | 'upsert';
