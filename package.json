@@ -86,7 +86,7 @@
     "*{css,scss,md,markdown,json,yaml,yml,graphql,html}": "prettier -w",
     "*{js,jsx,ts,tsx}": [
       "prettier -w",
-      "yarn lint --fix"
+      "npm run lint --fix"
     ],
     "package.json": "sort-package-json"
   },

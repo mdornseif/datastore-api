@@ -34,7 +34,7 @@ See [the API documentation](http://mdornseif.github.io/datastore-api/classes/Dst
 - The Javascript-Datastore Bindings use nanosecond-Timestamp Information stored in the Datasore and rounds it to milliseconds. Python at least retains microseconds.
 - the old `get_entity_group_version()` / `getEntityGroupVersion()` API has been retired. You can still for `key` query `{ path: [key.path[0], {'kind': '__entity_group__', 'id': 1}]}` to get a `__version__` property. The reliability of this data on FireStore is unknown.
 - Googles Javascript API decided to use `[Symbol(KEY)]` to represent the Key in an entity. This results in all kinds of confusion when serializing to JSON, e.g. for caching. This library adds the property `_keyStr` which will be transparently used to regenerate `[Symbol(KEY)]` when needed.
-- Many functions are somewhat polymorphic where the shape of the return value depends on the function parameters, e.g. if the API was called with a key or a list of keys. You are encouraged to alvais provide a list of parameters instead a single parameter, e.g. `get([key])`  instead of `get(key)`.
+- Many functions are somewhat polymorphic where the shape of the return value depends on the function parameters, e.g. if the API was called with a key or a list of keys. You are encouraged to alvais provide a list of parameters instead a single parameter, e.g. `get([key])` instead of `get(key)`.
 - `insert()` and `save()` sometimes return the key being written and sometimes not. So you might or might not get some data in `insertResponse?.[0].mutationResults?.[0]?.key?.path` - urgs.
 - Google avoids [BigInt](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/BigInt). So `key.id` is (usually but not always) returned as a String but you have to provide a Number to the API.
 
@@ -66,7 +66,7 @@ server.get('/metrics', async (req, res) => {
   - Other [Hidden Auto-Generated Datastore API Documentation](https://googleapis.dev/nodejs/datastore/latest/) with better navigation. Seems to contain more on the lower level access.
   - [SDK Source](https://github.com/googleapis/nodejs-datastore)
   - [API reference](https://cloud.google.com/datastore/docs/reference/data/rpc) helps to understand under-documented SDK.
-  - [grpc-js environment variables](https://github.com/grpc/grpc-node/blob/master/doc/environment_variables.md) - try [GRPC_VERBOSITY=DEBUG GRPC_TRACE=all yarn test](https://github.com/grpc/grpc-node/blob/master/TROUBLESHOOTING.md)
+  - [grpc-js environment variables](https://github.com/grpc/grpc-node/blob/master/doc/environment_variables.md) - try [GRPC_VERBOSITY=DEBUG GRPC_TRACE=all npm run test](https://github.com/grpc/grpc-node/blob/master/TROUBLESHOOTING.md)
 
 - API Simplification
   - [google-cloud-datastore-node](https://www.npmjs.com/package/google-cloud-datastore-node)
@@ -79,6 +79,7 @@ server.get('/metrics', async (req, res) => {
   - [google-cloud-kvstore](https://www.npmjs.com/package/google-cloud-kvstore)
   - [datastore-entity](https://github.com/aubrian-halili/datastore-entity#readme)
 - For debugging
+
   - [dsadmin](https://github.com/remko/dsadmin) - `npx dsadmin --project=projectid`
   - [google-datastore-emulator for node](https://github.com/ert78gb/google-datastore-emulator)
 
