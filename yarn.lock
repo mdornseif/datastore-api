@@ -1996,9 +1996,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@google-cloud/datastore@npm:^8.0.0":
-  version: 8.2.2
-  resolution: "@google-cloud/datastore@npm:8.2.2"
+"@google-cloud/datastore@npm:>=8.0.0":
+  version: 8.4.0
+  resolution: "@google-cloud/datastore@npm:8.4.0"
   dependencies:
     "@google-cloud/promisify": ^4.0.0
     arrify: ^2.0.1
@@ -2008,7 +2008,7 @@ __metadata:
     is: ^3.3.0
     split-array-stream: ^2.0.0
     stream-events: ^1.0.5
-  checksum: 8b56efedc8704a088301e22af1082d78937b01cc3f2b074a55c3684c73a308bfbbe97ce93b8e8e38f02bce8b012ec3076a44e44c0d1b28875b0314450afc3608
+  checksum: 307095068f5fff6e94d2de1f6cba9e41f3d8c34b904f057048ee49c7b432f9a1ad1f03f83603560db2c88f481d86c25970a529a369edc1978c8870a1d32771c1
   languageName: node
   linkType: hard
 
@@ -2477,6 +2477,13 @@ __metadata:
   dependencies:
     semver: ^7.3.5
   checksum: a50a6818de5fc557d0b0e6f50ec780a7a02ab8ad07e5ac8b16bf519e0ad60a144ac64f97d05c443c3367235d337182e1d012bbac0eb8dbae8dc7b40b193efd0e
+  languageName: node
+  linkType: hard
+
+"@opentelemetry/api@npm:^1.4.0":
+  version: 1.7.0
+  resolution: "@opentelemetry/api@npm:1.7.0"
+  checksum: 2398cbe65f199c3a7050125b3ad9c835f789bb0a616665e9c7f4475a29ac8334b6a3c15f38db48d345b522180c41c00b04cc174cd0eeffba98eb4874a565fa7e
   languageName: node
   linkType: hard
 
@@ -5288,7 +5295,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "datastore-api@workspace:."
   dependencies:
-    "@google-cloud/datastore": ^8.0.0
+    "@google-cloud/datastore": ">=8.0.0"
     "@google-cloud/promisify": ^3.0.1
     "@istanbuljs/nyc-config-typescript": ^1.0.1
     "@size-limit/preset-small-lib": ^8.2.6
@@ -5321,7 +5328,7 @@ __metadata:
     nyc: ^15.1.0
     open-cli: 7.2.0
     prettier: ^2.1.1
-    prom-client: ^14.0.1
+    prom-client: ">=14.0.0"
     size-limit: ^8.2.6
     sort-package-json: ^2.5.0
     standard-version: ^9.0.0
@@ -5332,7 +5339,7 @@ __metadata:
     typescript: ^4.0.2
     vitest: ^0.32.2
   peerDependencies:
-    debug: ^4.3.3
+    debug: ">=4.0.0"
   languageName: unknown
   linkType: soft
 
@@ -11075,12 +11082,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prom-client@npm:^14.0.1":
-  version: 14.2.0
-  resolution: "prom-client@npm:14.2.0"
+"prom-client@npm:>=14.0.0":
+  version: 15.1.0
+  resolution: "prom-client@npm:15.1.0"
   dependencies:
+    "@opentelemetry/api": ^1.4.0
     tdigest: ^0.1.1
-  checksum: d4c04e57616c72643dd02862d0d4bde09cf8869a19d0aef5e7b785e6e27d02439b66cdc165e3492f62d579fa91579183820870cc757a09b99399d2d02f46b9f1
+  checksum: 85bb134dfd0aab4606a27bce2d478d82650053da4340390210ed8280c14af24fc703a28fbc401b5edb4b756686a3df229f243ce5c7166c53925236fb763e4a51
   languageName: node
   linkType: hard
 
