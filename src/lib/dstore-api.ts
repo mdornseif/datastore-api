@@ -78,7 +78,7 @@ export type DstorePropertyValues =
 
 export interface IDstoreEntryWithoutKey {
   /** All User Data stored in the Datastore */
-  [key: string]?: DstorePropertyValues;
+  [key: string]: DstorePropertyValues;
 }
 
 /** Represents what is actually stored inside the Datastore, called "Entity" by Google
