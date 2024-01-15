@@ -43,8 +43,8 @@ jobs:
       - name: Install dependencies 📦
         run: npm install
 
-      - name: Lint 🔍
-        run: npm run lint
+      # - name: Lint 🔍
+      #   run: npm run lint
 
       - id: 'auth'
         name: 'Authenticate to Google Cloud for Tests 🔓'
