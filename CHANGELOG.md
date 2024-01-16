@@ -1,3 +1,10 @@
+## [6.0.1](https://github.com/mdornseif/datastore-api/compare/v6.0.0...v6.0.1) (2024-01-16)
+
+
+### Bug Fixes
+
+* deps ([099b82e](https://github.com/mdornseif/datastore-api/commit/099b82eb595277b9e5902fccc464e3c87601947d))
+
 # [5.0.0](https://github.com/mdornseif/datastore-api/compare/v4.0.1...v5.0.0) (2024-01-16)
 
 
