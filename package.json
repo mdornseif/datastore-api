@@ -1,5 +1,63 @@
 {
+  "name": "datastore-api",
+  "version": "6.0.1",
+  "description": "Simplified, more consitent API for Google Cloud Datastore",
+  "keywords": [
+    "datastore",
+    "google cloud"
+  ],
+  "homepage": "http://github.com/mdornseif/datastore-api/",
+  "repository": "https://github.com/mdornseif/datastore-api",
+  "license": "MIT",
   "author": "Maximillian Dornseif",
+  "main": "dist/index.js",
+  "module": "dist/datastore-api2.esm.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "analyze": "size-limit --why",
+    "build": "dts build",
+    "doc": "typedoc src/ --exclude **/*.spec.ts --out build/docs",
+    "lint": "dts lint",
+    "size": "size-limit",
+    "start": "dts watch",
+    "test": "vitest",
+    "unimported": "npx unimported; npx findead src"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*{css,scss,md,markdown,json,yaml,yml,graphql,html}": "npx prettier -w",
+    "*{js,jsx,ts,tsx}": [
+      "npx prettier -w",
+      "npm run lint --fix"
+    ],
+    "package.json": "sort-package-json"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  },
+  "prettier": {
+    "printWidth": 110,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "release": {
+    "branches": [
+      "main",
+      "master",
+      "next"
+    ]
+  },
   "ava": {
     "failFast": true,
     "files": [
@@ -12,17 +70,17 @@
       }
     }
   },
-  "config": {
-    "commitizen": {
-      "path": "cz-conventional-changelog"
-    }
+  "nyc": {
+    "exclude": [
+      "**/*.spec.js"
+    ],
+    "extends": "@istanbuljs/nyc-config-typescript"
   },
   "dependencies": {
     "@google-cloud/datastore": ">=7.0.0",
     "assertate-debug": "^2.4.2",
     "prom-client": ">=14.0.0"
   },
-  "description": "Simplified, more consitent API for Google Cloud Datastore",
   "devDependencies": {
     "@google-cloud/promisify": "^3.0.1",
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
@@ -65,68 +123,10 @@
     "typescript": "<5.1.0",
     "vitest": "^0.32.2"
   },
-  "engines": {
-    "node": ">=16"
-  },
-  "files": [
-    "dist",
-    "src"
-  ],
-  "homepage": "http://github.com/mdornseif/datastore-api/",
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "keywords": [
-    "datastore",
-    "google cloud"
-  ],
-  "license": "MIT",
-  "lint-staged": {
-    "*{css,scss,md,markdown,json,yaml,yml,graphql,html}": "npx prettier -w",
-    "*{js,jsx,ts,tsx}": [
-      "npx prettier -w",
-      "npm run lint --fix"
-    ],
-    "package.json": "sort-package-json"
-  },
-  "main": "dist/index.js",
-  "module": "dist/datastore-api2.esm.js",
-  "name": "datastore-api",
-  "nyc": {
-    "exclude": [
-      "**/*.spec.js"
-    ],
-    "extends": "@istanbuljs/nyc-config-typescript"
-  },
   "peerDependencies": {
     "debug": ">=4.0.0"
   },
-  "prettier": {
-    "printWidth": 110,
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "es5"
-  },
-  "release": {
-    "branches": [
-      "main",
-      "master",
-      "next"
-    ]
-  },
-  "repository": "https://github.com/mdornseif/datastore-api",
-  "scripts": {
-    "analyze": "size-limit --why",
-    "build": "dts build",
-    "doc": "typedoc src/ --exclude **/*.spec.ts --out build/docs",
-    "lint": "dts lint",
-    "size": "size-limit",
-    "start": "dts watch",
-    "test": "vitest",
-    "unimported": "npx unimported; npx findead src"
-  },
-  "typings": "dist/index.d.ts",
-  "version": "4.0.1"
+  "engines": {
+    "node": ">=16"
+  }
 }
