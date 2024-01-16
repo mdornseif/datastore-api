@@ -97,8 +97,8 @@ jobs:
 
       - name: Build Documentation 📚
         run: npm run doc
-      - name: Publish Documentation 📚
-        run: 'npx gh-pages -m "[ci skip] Updates" -d build/docs'
+      # - name: Publish Documentation 📚
+      #   run: 'npx gh-pages -m "[ci skip] Updates" -d build/docs'
 
       # - name: Deploy storybook to GitHub Pages
       #   run: npm run run storybook-deploy --ci
