@@ -56,8 +56,17 @@
       "main",
       "master",
       "next"
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/changelog",
+      "@semantic-release/git",
+      "@semantic-release/github"
+      "@semantic-release/npm",
     ]
   },
+
   "ava": {
     "failFast": true,
     "files": [
@@ -84,12 +93,6 @@
   "devDependencies": {
     "@google-cloud/promisify": "^3.0.1",
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
-    "@semantic-release/changelog": "^6.0.3",
-    "@semantic-release/commit-analyzer": "^11.1.0",
-    "@semantic-release/git": "^10.0.1",
-    "@semantic-release/github": "^9.2.6",
-    "@semantic-release/npm": "^11.0.2",
-    "@semantic-release/release-notes-generator": "^12.1.0",
     "@size-limit/preset-small-lib": "^8.2.6",
     "@tsconfig/recommended": "^1.0.2",
     "@types/debug": "^4.1.8",
