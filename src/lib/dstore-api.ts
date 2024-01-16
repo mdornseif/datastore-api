@@ -38,6 +38,9 @@ const debug = Debug('ds:api');
 /** @ignore */
 const transactionAsyncLocalStorage = new AsyncLocalStorage();
 
+// for HMR
+promClient.register.removeSingleMetric('dstore_requests_seconds')
+promClient.register.removeSingleMetric('dstore_failures_total')
 /** @ignore */
 const metricHistogram = new promClient.Histogram({
   name: 'dstore_requests_seconds',
