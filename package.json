@@ -125,8 +125,7 @@
     "size": "size-limit",
     "start": "dts watch",
     "test": "vitest",
-    "unimported": "npx unimported; npx findead src",
-    "version": "standard-version"
+    "unimported": "npx unimported; npx findead src"
   },
   "typings": "dist/index.d.ts",
   "version": "4.0.1"
