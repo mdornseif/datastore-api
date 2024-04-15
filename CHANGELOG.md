@@ -1,3 +1,10 @@
+## [6.0.2](https://github.com/mdornseif/datastore-api/compare/v6.0.1...v6.0.2) (2024-04-15)
+
+
+### Bug Fixes
+
+* ensure set() does not write `_keyStr` to the datastore ([0e6c792](https://github.com/mdornseif/datastore-api/commit/0e6c7929dc899c8f8a354c7a42bfb866fa1b61a8))
+
 ## [6.0.1](https://github.com/mdornseif/datastore-api/compare/v6.0.0...v6.0.1) (2024-01-16)
 
 
