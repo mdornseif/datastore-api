@@ -348,7 +348,7 @@ export class Dstore implements IDstore {
   async set(key: Key, data: IDstoreEntryWithoutKey): Promise<Key> {
     assertIsObject(key);
     assertIsObject(data);
-    const saveEntity = { key, data };
+    const saveEntity = { key, data: { ...data, _keyStr: undefined } };
     await this.save([saveEntity]);
     return saveEntity.key;
   }
