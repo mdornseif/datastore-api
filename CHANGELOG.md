@@ -1,3 +1,10 @@
+# [6.1.0](https://github.com/mdornseif/datastore-api/compare/v6.0.2...v6.1.0) (2025-04-11)
+
+
+### Features
+
+* added assertIsKey() ([3383fc9](https://github.com/mdornseif/datastore-api/commit/3383fc9024ee337980231be93ed16b888f7fb119))
+
 ## [6.0.2](https://github.com/mdornseif/datastore-api/compare/v6.0.1...v6.0.2) (2024-04-15)
 
 
