@@ -1,37 +1,93 @@
 {
-  "name": "datastore-api",
-  "version": "6.0.1",
-  "description": "Simplified, more consitent API for Google Cloud Datastore",
-  "keywords": [
-    "datastore",
-    "google cloud"
-  ],
-  "homepage": "http://github.com/mdornseif/datastore-api/",
-  "repository": "https://github.com/mdornseif/datastore-api",
-  "license": "MIT",
   "author": "Maximillian Dornseif",
-  "main": "dist/index.js",
-  "module": "dist/datastore-api2.esm.js",
-  "typings": "dist/index.d.ts",
+  "ava": {
+    "failFast": true,
+    "files": [
+      "!build/module/**"
+    ],
+    "timeout": "60s",
+    "typescript": {
+      "rewritePaths": {
+        "src/": "build/main/"
+      }
+    }
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  },
+  "dependencies": {
+    "@google-cloud/datastore": ">=7.0.0",
+    "assertate-debug": "^2.4.2",
+    "prom-client": ">=14.0.0"
+  },
+  "description": "Simplified, more consistent API for Google Cloud Datastore",
+  "devDependencies": {
+    "@google-cloud/promisify": "^4.0.0",
+    "@istanbuljs/nyc-config-typescript": "^1.0.2",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^11.1.0",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^9.2.6",
+    "@semantic-release/npm": "^11.0.3",
+    "@semantic-release/release-notes-generator": "^12.1.0",
+    "@tsconfig/recommended": "^1.0.3",
+    "@types/debug": "^4.1.12",
+    "@types/is": "^0.0.25",
+    "@types/node": "^20.11.24",
+    "@typescript-eslint/eslint-plugin": "^7.1.0",
+    "@typescript-eslint/parser": "^7.1.0",
+    "codecov": "^3.8.3",
+    "cspell": "5.14.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "debug": "^4.3.4",
+    "dts-cli": "^2.0.5",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-eslint-comments": "^3.2.0",
+    "eslint-plugin-flowtype": "^8.0.3",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "eslint-plugin-react": "^7.34.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "gh-pages": "^5.0.0",
+    "google-datastore-emulator": ">=7.0.0",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
+    "npm-run-all": "^4.1.5",
+    "nyc": "^15.1.0",
+    "open-cli": "8.0.0",
+    "prettier": "^3.2.5",
+    "semantic-release": "^23.0.0",
+    "sort-package-json": "^2.8.0",
+    "standard-version": "^9.5.0",
+    "ts-essentials": "9.4.1",
+    "ts-node": "^10.9.2",
+    "tslib": "^2.6.2",
+    "typedoc": "0.25.10",
+    "typescript": "^5.3.3",
+    "vitest": "^1.3.1"
+  },
+  "engines": {
+    "node": ">=16"
+  },
   "files": [
     "dist",
     "src"
   ],
-  "scripts": {
-    "analyze": "size-limit --why",
-    "build": "dts build",
-    "doc": "typedoc src/ --exclude **/*.spec.ts --out build/docs",
-    "lint": "dts lint",
-    "size": "size-limit",
-    "start": "dts watch",
-    "test": "vitest",
-    "unimported": "npx unimported; npx findead src"
-  },
+  "homepage": "http://github.com/mdornseif/datastore-api/",
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
     }
   },
+  "keywords": [
+    "datastore",
+    "google cloud"
+  ],
+  "license": "MIT",
   "lint-staged": {
     "*{css,scss,md,markdown,json,yaml,yml,graphql,html}": "npx prettier -w",
     "*{js,jsx,ts,tsx}": [
@@ -40,14 +96,21 @@
     ],
     "package.json": "sort-package-json"
   },
-  "config": {
-    "commitizen": {
-      "path": "cz-conventional-changelog"
-    }
+  "main": "dist/index.js",
+  "module": "dist/datastore-api2.esm.js",
+  "name": "datastore-api",
+  "nyc": {
+    "exclude": [
+      "**/*.spec.js"
+    ],
+    "extends": "@istanbuljs/nyc-config-typescript"
+  },
+  "peerDependencies": {
+    "debug": ">=4.0.0"
   },
   "prettier": {
     "printWidth": 110,
-    "semi": true,
+    "semi": false,
     "singleQuote": true,
     "trailingComma": "es5"
   },
@@ -61,87 +124,22 @@
       "@semantic-release/commit-analyzer",
       "@semantic-release/release-notes-generator",
       "@semantic-release/changelog",
+      "@semantic-release/npm",
       "@semantic-release/git",
-      "@semantic-release/github",
-      "@semantic-release/npm"
+      "@semantic-release/github"
     ]
   },
-  "ava": {
-    "failFast": true,
-    "files": [
-      "!build/module/**"
-    ],
-    "timeout": "60s",
-    "typescript": {
-      "rewritePaths": {
-        "src/": "build/main/"
-      }
-    }
+  "repository": "https://github.com/mdornseif/datastore-api",
+  "scripts": {
+    "build": "dts build",
+    "doc": "typedoc src/ --exclude **/*.spec.ts --out build/docs",
+    "lint": "dts lint",
+    "size": "npx vite-bundle-visualizer -t sunburst # npx source-map-explorer dist/index.js",
+    "start": "dts watch",
+    "test": "vitest",
+    "unimported": "npx findead src ; npx unimported; npx depcheck",
+    "update": "npx npm-check-updates --interactive"
   },
-  "nyc": {
-    "exclude": [
-      "**/*.spec.js"
-    ],
-    "extends": "@istanbuljs/nyc-config-typescript"
-  },
-  "dependencies": {
-    "@google-cloud/datastore": ">=7.0.0",
-    "assertate-debug": "^2.4.2",
-    "prom-client": ">=14.0.0"
-  },
-  "devDependencies": {
-    "@google-cloud/promisify": "^3.0.1",
-    "@istanbuljs/nyc-config-typescript": "^1.0.1",
-    "@semantic-release/changelog": "^6.0.3",
-    "@semantic-release/commit-analyzer": "^11.1.0",
-    "@semantic-release/git": "^10.0.1",
-    "@semantic-release/github": "^9.2.6",
-    "@semantic-release/npm": "^11.0.2",
-    "@semantic-release/release-notes-generator": "^12.1.0",
-    "@size-limit/preset-small-lib": "^8.2.6",
-    "@tsconfig/recommended": "^1.0.2",
-    "@types/debug": "^4.1.8",
-    "@types/is": "^0.0.22",
-    "@types/node": "^20.3.3",
-    "@typescript-eslint/eslint-plugin": "^6.18.1",
-    "@typescript-eslint/parser": "^6.18.1",
-    "codecov": "^3.5.0",
-    "cspell": "5.14.0",
-    "cz-conventional-changelog": "^3.3.0",
-    "debug": "^4.3.3",
-    "dts-cli": "^2.0.4",
-    "eslint": "^8.56.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-eslint-comments": "^3.2.0",
-    "eslint-plugin-flowtype": "^8.0.3",
-    "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-jsx-a11y": "^6.8.0",
-    "eslint-plugin-prettier": "^5.1.3",
-    "eslint-plugin-react": "^7.33.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "gh-pages": "^5.0.0",
-    "google-datastore-emulator": ">=7.0.0",
-    "husky": "^8.0.3",
-    "lint-staged": "^13.2.3",
-    "npm-run-all": "^4.1.5",
-    "nyc": "^15.1.0",
-    "open-cli": "7.2.0",
-    "prettier": "^3.2.2",
-    "semantic-release": "^23.0.0",
-    "size-limit": "^8.2.6",
-    "sort-package-json": "^2.5.0",
-    "standard-version": "^9.0.0",
-    "ts-essentials": "9.3.2",
-    "ts-node": "^10.4.0",
-    "tslib": "^2.6.0",
-    "typedoc": "0.24.8",
-    "typescript": "<5.1.0",
-    "vitest": "^0.32.2"
-  },
-  "peerDependencies": {
-    "debug": ">=4.0.0"
-  },
-  "engines": {
-    "node": ">=16"
-  }
+  "typings": "dist/index.d.ts",
+  "version": "6.0.1"
 }
