@@ -299,6 +299,7 @@ describe('query', async () => {
     // foo is removed by selection
     expect(JSON.parse(JSON.stringify(result2?.[0]))).toMatchInlineSnapshot(`
       {
+        "_keyStr": "agByEAsSCXRlc3RZb2RlbCIBMwyiAQR0ZXN0",
         "baz": "baz",
       }
     `);

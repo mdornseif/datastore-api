@@ -240,6 +240,7 @@ describe('query', async () => {
     // `)
     expect(await kvStore.get(entity.key)).toMatchInlineSnapshot(`
       {
+        "_keyStr": "agByEAsSCXRlc3RZb2RlbCIBMwyiAQR0ZXN0",
         "baz": "baz",
         "foo": "bar",
         Symbol(KEY): Key {

@@ -608,7 +608,6 @@ export class Dstore implements IDstore {
    *
    * @throws [[DstoreError]]
    * @category Datastore Drop-In
-   * @deprecated Use [[iterate]] instead.
    */
   async query(
     kindName: string,
@@ -637,7 +636,8 @@ export class Dstore implements IDstore {
       if (selection.length > 0) {
         q.select(selection as any)
       }
-      return await this.getDoT().runQuery(q)
+      const ret = await this.getDoT().runQuery(q)
+      return [this.fixKeys(ret[0]), ret[1]]
     } catch (error) {
       await setImmediate()
       throw new DstoreError('datastore.query error', error as Error, {
