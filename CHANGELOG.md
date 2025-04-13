@@ -1,3 +1,12 @@
+## [6.2.1](https://github.com/mdornseif/datastore-api/compare/v6.2.0...v6.2.1) (2025-04-13)
+
+
+### Bug Fixes
+
+* `query()` return value now calls fixKeys() on all entities. ([67ac4a0](https://github.com/mdornseif/datastore-api/commit/67ac4a0f55083c9773c744061bd85083a2d8a4f4))
+* Assure proper key handling in `insert()` and `update()`. ([5f12b3b](https://github.com/mdornseif/datastore-api/commit/5f12b3b5eef6e1d075f7e4b528910910bf7aba0f))
+* stronger typing for `iterate()` ([8d8b01a](https://github.com/mdornseif/datastore-api/commit/8d8b01a88dea2b21d69be14384d7812b3d6583c9))
+
 # [6.2.0](https://github.com/mdornseif/datastore-api/compare/v6.1.0...v6.2.0) (2025-04-13)
 
 
