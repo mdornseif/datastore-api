@@ -675,7 +675,7 @@ export class Dstore implements IDstore {
   async * iterate({
     kindName,
     filters = [],
-    limit = 2500,
+    limit = 0,
     ordering = [],
     selection = [],
   }: IIterateParams): AsyncIterable<IDstoreEntryWithKey> {
