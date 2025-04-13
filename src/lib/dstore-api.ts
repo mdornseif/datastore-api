@@ -148,7 +148,7 @@ type IDstore = {
     selection?: readonly string[],
     cursor?: string
   ) => Promise<RunQueryResponse>
-  iterate: (options: IIterateParams) => AsyncIterable<IDstoreEntry>
+  iterate: (options: IIterateParams) => AsyncIterable<IDstoreEntryWithKey>
   allocateOneId: (kindName: string) => Promise<string>
   runInTransaction: <T>(func: { (): Promise<T>; (): T }) => Promise<T>
 }
@@ -678,7 +678,7 @@ export class Dstore implements IDstore {
     limit = 2500,
     ordering = [],
     selection = [],
-  }: IIterateParams): AsyncIterable<IDstoreEntry> {
+  }: IIterateParams): AsyncIterable<IDstoreEntryWithKey> {
     assertIsString(kindName)
     assertIsArray(filters)
     assertIsNumber(limit)
