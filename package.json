@@ -141,5 +141,5 @@
     "update": "npx npm-check-updates --interactive"
   },
   "typings": "dist/index.d.ts",
-  "version": "6.0.1"
+  "version": "6.2.0"
 }

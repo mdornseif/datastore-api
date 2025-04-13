@@ -1,3 +1,10 @@
+# [6.2.0](https://github.com/mdornseif/datastore-api/compare/v6.1.0...v6.2.0) (2025-04-13)
+
+
+### Features
+
+* dstore(iterate) for async iteration. ([72ee624](https://github.com/mdornseif/datastore-api/commit/72ee624bbde7206b99ff15bf851832a53eb7d399))
+
 # [6.1.0](https://github.com/mdornseif/datastore-api/compare/v6.0.2...v6.1.0) (2025-04-11)
 
 
