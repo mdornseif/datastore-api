@@ -1,3 +1,10 @@
+## [6.2.2](https://github.com/mdornseif/datastore-api/compare/v6.2.1...v6.2.2) (2025-04-13)
+
+
+### Bug Fixes
+
+* **typings:** ensure `iterate()` returns IDstoreEntryWithKey ([85e6ce6](https://github.com/mdornseif/datastore-api/commit/85e6ce6173bb77cc3699befa66cb0944279e7896))
+
 ## [6.2.1](https://github.com/mdornseif/datastore-api/compare/v6.2.0...v6.2.1) (2025-04-13)
 
 
