@@ -4,7 +4,7 @@
  * Created by Dr. Maximillian Dornseif 2025-04-11 in datastore-api 6.0.1
  */
 
-import { Datastore, Key } from './dstore-api'
+import { Datastore, Key } from '@google-cloud/datastore'
 import { AssertionMessageType, assert, getType } from 'assertate-debug'
 
 /**

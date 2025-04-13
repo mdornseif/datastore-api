@@ -28,6 +28,7 @@ import {
 import Debug from 'debug'
 import promClient from 'prom-client'
 import { Writable } from 'ts-essentials'
+import { assertIsKey } from './assert'
 
 /** @ignore */
 export { Datastore, Key, PathType, Query, Transaction } from '@google-cloud/datastore'
@@ -90,6 +91,15 @@ export interface IDstoreEntryWithoutKey {
 export interface IDstoreEntry extends IDstoreEntryWithoutKey {
   /* Datastore Key provided by [@google-cloud/datastore](https://github.com/googleapis/nodejs-datastore#readme) */
   readonly [Datastore.KEY]?: Key
+  /** [Datastore.KEY] key */
+  _keyStr: string
+}
+
+/** Represents what is actually stored inside the Datastore, called "Entity" by Google
+*/
+export interface IDstoreEntryWithKey extends IDstoreEntry {
+  /* Datastore Key provided by [@google-cloud/datastore](https://github.com/googleapis/nodejs-datastore#readme) */
+  readonly [Datastore.KEY]: Key
   /** [Datastore.KEY] key */
   _keyStr: string
 }
@@ -691,7 +701,8 @@ export class Dstore implements IDstore {
       for await (const entity of q.runStream()) {
         const ret = this.fixKeys([entity])[0]
         assertIsDefined(ret, 'datastore.iterate: entity is undefined')
-        yield ret
+        assertIsKey(ret[Datastore.KEY])
+        yield ret as IDstoreEntryWithKey
       }
     } catch (error) {
       await setImmediate()
