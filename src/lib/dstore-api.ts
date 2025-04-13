@@ -271,6 +271,29 @@ export class Dstore implements IDstore {
     return entities as Array<IDstoreEntry | undefined>
   }
 
+  /** this is for save, insert, update and upsert  and ensures _kkeyStr() handling.
+   * 
+   */
+  private prepareEntitiesForDatastore(entities: readonly DstoreSaveEntity[]) {
+    for (const e of entities) {
+      assertIsObject(e.key)
+      assertIsObject(e.data)
+      this.fixKeys([e.data])
+      e.excludeLargeProperties = e.excludeLargeProperties === undefined ? true : e.excludeLargeProperties
+      e.data = { ...e.data, _keyStr: undefined }
+    }
+  }
+
+  /** this is for save, insert, update and upsert  and ensures _kkeyStr() handling.
+   * 
+   */
+  private prepareEntitiesFromDatastore(entities: readonly DstoreSaveEntity[] & unknown[]) {
+    for (const e of entities) {
+      e.data[Datastore.KEY] = e.key
+      this.fixKeys([e.data])
+    }
+  }
+
   /** `get()` reads a [[IDstoreEntry]] from the Datastore.
    *
    * It returns [[IDstoreEntry]] or `null` if not found.
@@ -399,20 +422,11 @@ export class Dstore implements IDstore {
     let ret: CommitResponse | undefined
     const metricEnd = metricHistogram.startTimer()
     try {
+      this.prepareEntitiesForDatastore(entities)
       // Within Transaction we don't get any answer here!
       // [ { mutationResults: [ [Object], [Object] ], indexUpdates: 51 } ]
-      for (const e of entities) {
-        assertIsObject(e.key)
-        assertIsObject(e.data)
-        this.fixKeys([e.data])
-        e.excludeLargeProperties = e.excludeLargeProperties === undefined ? true : e.excludeLargeProperties
-        e.data = { ...e.data, _keyStr: undefined }
-      }
       ret = (await this.getDoT().save(entities)) || undefined
-      for (const e of entities) {
-        e.data[Datastore.KEY] = e.key
-        this.fixKeys([e.data])
-      }
+      this.prepareEntitiesFromDatastore(entities)
     } catch (error) {
       metricFailureCounter.inc({ operation: 'save' })
       await setImmediate()
@@ -422,6 +436,8 @@ export class Dstore implements IDstore {
     }
     return ret
   }
+
+
 
   /** `insert()` is compatible to [Datastore.insert()](https://cloud.google.com/nodejs/docs/reference/datastore/latest/datastore/datastore#_google_cloud_datastore_Datastore_insert_member_1_).
    *
@@ -446,7 +462,9 @@ export class Dstore implements IDstore {
     let ret: CommitResponse | undefined
     const metricEnd = metricHistogram.startTimer()
     try {
+      this.prepareEntitiesForDatastore(entities)
       ret = (await this.getDoT().insert(entities)) || undefined
+      this.prepareEntitiesFromDatastore(entities)
     } catch (error) {
       // console.error(error)
       metricFailureCounter.inc({ operation: 'insert' })
@@ -490,7 +508,9 @@ export class Dstore implements IDstore {
     const metricEnd = metricHistogram.startTimer()
 
     try {
+      this.prepareEntitiesForDatastore(entities)
       ret = (await this.getDoT().update(entities)) || undefined
+      this.prepareEntitiesFromDatastore(entities)
     } catch (error) {
       // console.error(error)
       metricFailureCounter.inc({ operation: 'update' })
@@ -578,6 +598,7 @@ export class Dstore implements IDstore {
    *
    * @throws [[DstoreError]]
    * @category Datastore Drop-In
+   * @deprecated Use [[iterate]] instead.
    */
   async query(
     kindName: string,
@@ -606,7 +627,7 @@ export class Dstore implements IDstore {
       if (selection.length > 0) {
         q.select(selection as any)
       }
-      return await this.runQuery(q)
+      return await this.getDoT().runQuery(q)
     } catch (error) {
       await setImmediate()
       throw new DstoreError('datastore.query error', error as Error, {
@@ -624,12 +645,21 @@ export class Dstore implements IDstore {
    * It takes a Parameter object and returns an AsyncIterable.
    * Entities returned have been processed by `fixKeys()`.
    * 
+   * Can be used with `for await` loops like this:
+   * 
+   * ```typescript
+   * for await (const entity of dstore.iterate({ kindName: 'p_ReservierungsAbruf', filters: [['verbucht', '=', true]]})) {
+   *   console.log(entity)
+   * }
+   * ```
+   * 
    * @param kindName Name of the [[Datastore]][Kind](https://cloud.google.com/datastore/docs/concepts/entities#kinds_and_identifiers) ("Table") which should be searched.
    * @param filters List of [[Query]] filter() calls.
    * @param limit Maximum Number of Results to return.
    * @param ordering List of [[Query]] order() calls.
    * @param selection selectionList of [[Query]] select() calls.
    *
+   * @throws [[DstoreError]]
    * @category Additional
    */
   async * iterate({
@@ -658,7 +688,7 @@ export class Dstore implements IDstore {
       if (selection.length > 0) {
         q.select(selection as any)
       }
-      for await (const entity of this.getDoT().runStream(q)) {
+      for await (const entity of q.runStream()) {
         const ret = this.fixKeys([entity])[0]
         assertIsDefined(ret, 'datastore.iterate: entity is undefined')
         yield ret

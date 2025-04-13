@@ -12,7 +12,7 @@ Dstore implements a slightly more accessible version of the [Google Cloud Datast
 
 Also the typings are strange and overly broad.
 
-Dstore tries to abstract away most surprises the datastore provides to you but als tries to stay as API compatible as possible to [@google-cloud/datastore](https://github.com/googleapis/nodejs-datastore).
+This package tries to abstract away most surprises the datastore provides to you but als tries to stay as API compatible as possible to [@google-cloud/datastore](https://github.com/googleapis/nodejs-datastore).
 
 Main differences:
 
@@ -23,6 +23,7 @@ Main differences:
 - [allocateOneId](http://mdornseif.io/datastore-api/classes/Dstore.html#allocateOneId) returns a single numeric string encoded unique datastore id without the need of fancy unpacking.
 - [runInTransaction](http://mdornseif.io/datastore-api/classes/Dstore.html#runInTransaction) allows you to provide a function to be executed inside an transaction without the need of passing around the transaction object. This is modelled after Python 2.7 [ndb's `@ndb.transactional` feature](https://cloud.google.com/appengine/docs/standard/python/ndb/transactions). This is implemented via node's [AsyncLocalStorage](https://nodejs.org/docs/latest-v14.x/api/async_hooks.html).
 - [keySerialize](http://mdornseif.io/datastore-api/classes/Dstore.html#keySerialize) is synchronous. 🦄
+- [iterate] allows for async iteration of (larege) queries.
 - Starting your code with the environment variable `DEBUG='ds:api'` allows you to trace API calls.
 
 Find the full documentation [here](https://mdornseif.github.io/datastore-api/classes/Dstore.html). In there also some of the idiosyncrasies of using the Datastore are explained.
