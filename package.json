@@ -24,7 +24,7 @@
   },
   "description": "Simplified, more consistent API for Google Cloud Datastore",
   "devDependencies": {
-    "@google-cloud/promisify": "^4.0.0",
+    "@google-cloud/promisify": ">=4.0.0",
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/commit-analyzer": "^11.1.0",
