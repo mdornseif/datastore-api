@@ -1,3 +1,10 @@
+## [6.2.3](https://github.com/mdornseif/datastore-api/compare/v6.2.2...v6.2.3) (2025-04-13)
+
+
+### Bug Fixes
+
+* default to unlimited iteration in `iterate()` ([a085275](https://github.com/mdornseif/datastore-api/commit/a085275d664eb78ae844277b386cda83baeb55cc))
+
 ## [6.2.2](https://github.com/mdornseif/datastore-api/compare/v6.2.1...v6.2.2) (2025-04-13)
 
 
