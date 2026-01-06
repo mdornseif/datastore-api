@@ -80,6 +80,97 @@
 
 # Changelog
 
+All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
+
+## [6.3.0](https://github.com/mdornseif/datastore-api/compare/v6.2.3...v6.3.0) (2026-01-06)
+
+
+### Features
+
+* make iterate<T>() a generic function ([300a610](https://github.com/mdornseif/datastore-api/commit/300a610e4f36f73b885991120a9b66206ab51d2d))
+
+## [6.2.3](https://github.com/mdornseif/datastore-api/compare/v6.2.2...v6.2.3) (2025-04-13)
+
+
+### Bug Fixes
+
+* default to unlimited iteration in `iterate()` ([a085275](https://github.com/mdornseif/datastore-api/commit/a085275d664eb78ae844277b386cda83baeb55cc))
+
+## [6.2.2](https://github.com/mdornseif/datastore-api/compare/v6.2.1...v6.2.2) (2025-04-13)
+
+
+### Bug Fixes
+
+* **typings:** ensure `iterate()` returns IDstoreEntryWithKey ([85e6ce6](https://github.com/mdornseif/datastore-api/commit/85e6ce6173bb77cc3699befa66cb0944279e7896))
+
+## [6.2.1](https://github.com/mdornseif/datastore-api/compare/v6.2.0...v6.2.1) (2025-04-13)
+
+
+### Bug Fixes
+
+* `query()` return value now calls fixKeys() on all entities. ([67ac4a0](https://github.com/mdornseif/datastore-api/commit/67ac4a0f55083c9773c744061bd85083a2d8a4f4))
+* Assure proper key handling in `insert()` and `update()`. ([5f12b3b](https://github.com/mdornseif/datastore-api/commit/5f12b3b5eef6e1d075f7e4b528910910bf7aba0f))
+* stronger typing for `iterate()` ([8d8b01a](https://github.com/mdornseif/datastore-api/commit/8d8b01a88dea2b21d69be14384d7812b3d6583c9))
+
+# [6.2.0](https://github.com/mdornseif/datastore-api/compare/v6.1.0...v6.2.0) (2025-04-13)
+
+
+### Features
+
+* dstore(iterate) for async iteration. ([72ee624](https://github.com/mdornseif/datastore-api/commit/72ee624bbde7206b99ff15bf851832a53eb7d399))
+
+# [6.1.0](https://github.com/mdornseif/datastore-api/compare/v6.0.2...v6.1.0) (2025-04-11)
+
+
+### Features
+
+* added assertIsKey() ([3383fc9](https://github.com/mdornseif/datastore-api/commit/3383fc9024ee337980231be93ed16b888f7fb119))
+
+## [6.0.2](https://github.com/mdornseif/datastore-api/compare/v6.0.1...v6.0.2) (2024-04-15)
+
+
+### Bug Fixes
+
+* ensure set() does not write `_keyStr` to the datastore ([0e6c792](https://github.com/mdornseif/datastore-api/commit/0e6c7929dc899c8f8a354c7a42bfb866fa1b61a8))
+
+## [6.0.1](https://github.com/mdornseif/datastore-api/compare/v6.0.0...v6.0.1) (2024-01-16)
+
+
+### Bug Fixes
+
+* deps ([099b82e](https://github.com/mdornseif/datastore-api/commit/099b82eb595277b9e5902fccc464e3c87601947d))
+
+# [5.0.0](https://github.com/mdornseif/datastore-api/compare/v4.0.1...v5.0.0) (2024-01-16)
+
+
+### Bug Fixes
+
+* automatic release ([90976cb](https://github.com/mdornseif/datastore-api/commit/90976cb5184e396e6e9eb893142244d321c2fafd))
+* automatic releases ([2789ec1](https://github.com/mdornseif/datastore-api/commit/2789ec16d72935cf2aa9168e2359a41c9b2a408a))
+* deps ([530830c](https://github.com/mdornseif/datastore-api/commit/530830c72f228ea8b663bb1c7c7b62cc99e56894))
+* deps ([b47cf0a](https://github.com/mdornseif/datastore-api/commit/b47cf0ad3846361297aa0d6576049c2c833fff5f))
+* **deps:** @google/cloud-datastore dependency version range ([c251705](https://github.com/mdornseif/datastore-api/commit/c25170533c842db0cc2b6209951410239e668b4f))
+* double versioning ([2f9962f](https://github.com/mdornseif/datastore-api/commit/2f9962fb8259cadfbe537a40687f53344e72bd3f))
+* Ensure package.version is updated in git ([5dd5f3f](https://github.com/mdornseif/datastore-api/commit/5dd5f3f269a463205c9cb47fb2ea138b8314f439))
+* for now, do not publish documentation ([49f535a](https://github.com/mdornseif/datastore-api/commit/49f535a037d3b7cfeee49c71f924fd315924c947))
+* **Typings:** Allow empty Datastore Entities in `IDstoreEntryWithoutKey`. ([763cdaa](https://github.com/mdornseif/datastore-api/commit/763cdaa3459f2f42f861ee785c8669939d641613))
+* typo ([bd61266](https://github.com/mdornseif/datastore-api/commit/bd612665212556e167ba003a7453deb5bf830750))
+* typo ([f34e146](https://github.com/mdornseif/datastore-api/commit/f34e146d5e3c621e96f9e97542ba782e198fd746))
+* typo ([4b02261](https://github.com/mdornseif/datastore-api/commit/4b0226113d4b394d91bf91723dcc2072cf985962))
+* versioning ([dd6a598](https://github.com/mdornseif/datastore-api/commit/dd6a5981483058d5ff13ff97ac4342d66724153e))
+
+
+### Features
+
+* Support HMR ([5d13e95](https://github.com/mdornseif/datastore-api/commit/5d13e9510e676a7059781b65353de5aed9237fa7))
+
+
+### BREAKING CHANGES
+
+* **Typings:** Cascading Change to typings.
+
+# Changelog
+
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
 ## [4.0.0](https://github.com/mdornseif/datastore-api/compare/v2.0.1...v4.0.0) (2023-10-24)
