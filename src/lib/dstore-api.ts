@@ -148,7 +148,7 @@ type IDstore = {
     selection?: readonly string[],
     cursor?: string
   ) => Promise<RunQueryResponse>
-  iterate: (options: IIterateParams) => AsyncIterable<IDstoreEntryWithKey>
+  iterate: <T = IDstoreEntryWithKey>(options: IIterateParams) => AsyncIterable<T>
   allocateOneId: (kindName: string) => Promise<string>
   runInTransaction: <T>(func: { (): Promise<T>; (): T }) => Promise<T>
 }
@@ -672,13 +672,13 @@ export class Dstore implements IDstore {
    * @throws [[DstoreError]]
    * @category Additional
    */
-  async * iterate({
+  async * iterate<T = IDstoreEntryWithKey>({
     kindName,
     filters = [],
     limit = 0,
     ordering = [],
     selection = [],
-  }: IIterateParams): AsyncIterable<IDstoreEntryWithKey> {
+  }: IIterateParams): AsyncIterable<T> {
     assertIsString(kindName)
     assertIsArray(filters)
     assertIsNumber(limit)
@@ -702,7 +702,7 @@ export class Dstore implements IDstore {
         const ret = this.fixKeys([entity])[0]
         assertIsDefined(ret, 'datastore.iterate: entity is undefined')
         assertIsKey(ret[Datastore.KEY])
-        yield ret as IDstoreEntryWithKey
+        yield ret as T
       }
     } catch (error) {
       await setImmediate()
