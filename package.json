@@ -109,5 +109,5 @@
     "update": "npx npm-check-updates --interactive"
   },
   "typings": "dist/index.d.ts",
-  "version": "6.4.0"
+  "version": "6.4.1"
 }
