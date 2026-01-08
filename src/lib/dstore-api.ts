@@ -733,7 +733,7 @@ export class Dstore implements IDstore {
     limit = 0,
     ordering = [],
     selection = [],
-  }: IIterateParams): Array<T> {
+  }: IIterateParams): Promise<Array<T>> {
     const iterator = this.iterate<T>({ kindName, filters, limit, ordering, selection })
     const entities: T[] = []
     for await (const entity of iterator) {
