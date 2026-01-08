@@ -54,7 +54,6 @@
     "nyc": "^15.1.0",
     "open-cli": "8.0.0",
     "prettier": "^3.2.5",
-    "sort-package-json": "^2.8.0",
     "standard-version": "^9.5.0",
     "ts-essentials": "9.4.1",
     "ts-node": "^10.9.2",
@@ -71,24 +70,11 @@
     "src"
   ],
   "homepage": "https://forge.23.nu/md/datastore-api",
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "keywords": [
     "datastore",
     "google cloud"
   ],
   "license": "MIT",
-  "lint-staged": {
-    "*{css,scss,md,markdown,json,yaml,yml,graphql,html}": "npx prettier -w",
-    "*{js,jsx,ts,tsx}": [
-      "npx prettier -w",
-      "npm run lint --fix"
-    ],
-    "package.json": "sort-package-json"
-  },
   "main": "dist/index.js",
   "module": "dist/datastore-api2.esm.js",
   "name": "datastore-api",
