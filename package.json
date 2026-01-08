@@ -99,6 +99,7 @@
   },
   "scripts": {
     "build": "dts build",
+    "publish": "npx commit-and-tag-version",
     "doc": "typedoc src/ --exclude **/*.spec.ts --out build/docs",
     "lint": "dts lint",
     "size": "npx vite-bundle-visualizer -t sunburst # npx source-map-explorer dist/index.js",
