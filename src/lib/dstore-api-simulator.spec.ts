@@ -297,6 +297,12 @@ describe('queryies', async () => {
       expect(entity).toMatchInlineSnapshot()
     }
   })
+
+  test.skip('list', async () => {
+    const kvStore = getDstore()
+    const result = await kvStore.list({ kindName: 'testYodel', limit: 1 })
+    expect(result).toMatchInlineSnapshot()
+  })
 })
 
 test('set', async () => {

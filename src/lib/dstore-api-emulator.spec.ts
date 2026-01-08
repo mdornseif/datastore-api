@@ -414,13 +414,50 @@ describe('queryies', async () => {
     // expect(key.id).toBe(entity.key.id)
   })
 
-  test.skip('iterate', async () => {
+  test('iterate', async () => {
     const kvStore = getDstore()
     const result = await kvStore.iterate({ kindName: 'testYodel', limit: 1 })
     for await (const entity of result) {
-      expect(entity).toMatchInlineSnapshot()
+      expect(entity).toMatchInlineSnapshot(`
+        {
+          "_keyStr": "agByDwsSCXRlc3RZb2RlbBgCDKIBBHRlc3Q",
+          "foo": "bar",
+          Symbol(KEY): Key {
+            "id": "2",
+            "kind": "testYodel",
+            "namespace": "test",
+            "path": [
+              "testYodel",
+              "2",
+            ],
+          },
+        }
+      `)
     }
   })
+
+  test('list', async () => {
+    const kvStore = getDstore()
+    const result = await kvStore.list({ kindName: 'testYodel', limit: 1 })
+    expect(result).toMatchInlineSnapshot(`
+      [
+        {
+          "_keyStr": "agByDwsSCXRlc3RZb2RlbBgCDKIBBHRlc3Q",
+          "foo": "bar",
+          Symbol(KEY): Key {
+            "id": "2",
+            "kind": "testYodel",
+            "namespace": "test",
+            "path": [
+              "testYodel",
+              "2",
+            ],
+          },
+        },
+      ]
+    `)
+  })
+
 })
 
 test('set', async () => {

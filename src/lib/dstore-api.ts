@@ -149,6 +149,7 @@ type IDstore = {
     cursor?: string
   ) => Promise<RunQueryResponse>
   iterate: <T = IDstoreEntryWithKey>(options: IIterateParams) => AsyncIterable<T>
+  list: <T = IDstoreEntryWithKey>(options: IIterateParams) => Promise<Array<T>>
   allocateOneId: (kindName: string) => Promise<string>
   runInTransaction: <T>(func: { (): Promise<T>; (): T }) => Promise<T>
 }
@@ -248,7 +249,7 @@ export class Dstore implements IDstore {
    * @category Additional
    */
   readKey(ent: IDstoreEntry): Key {
-    assertIsObject(ent)
+    assertIsObject(ent, 'entity', 'readKey() wants to be provided an entity object')
     let ret = ent[Datastore.KEY]
     if (ent._keyStr && !ret) {
       ret = this.keyFromSerialized(ent._keyStr)
@@ -714,6 +715,33 @@ export class Dstore implements IDstore {
       })
     }
   }
+
+  /** `list()` is a non iteratingversion of `iterate()`.
+   * 
+   * @param kindName Name of the [[Datastore]][Kind](https://cloud.google.com/datastore/docs/concepts/entities#kinds_and_identifiers) ("Table") which should be searched.
+   * @param filters List of [[Query]] filter() calls.
+   * @param limit Maximum Number of Results to return.
+   * @param ordering List of [[Query]] order() calls.
+   * @param selection selectionList of [[Query]] select() calls.
+   *
+   * @throws [[DstoreError]]
+   * @category Additional
+   */
+  async list<T = IDstoreEntryWithKey>({
+    kindName,
+    filters = [],
+    limit = 0,
+    ordering = [],
+    selection = [],
+  }: IIterateParams): Array<T> {
+    const iterator = this.iterate<T>({ kindName, filters, limit, ordering, selection })
+    const entities: T[] = []
+    for await (const entity of iterator) {
+      entities.push(entity as T)
+    }
+    return entities
+  }
+
 
   /** Allocate one ID in the Datastore.
    *

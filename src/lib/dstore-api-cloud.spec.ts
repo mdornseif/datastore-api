@@ -359,6 +359,28 @@ describe('queryies', async () => {
       `)
     }
   })
+
+  test('list', async () => {
+    const kvStore = getDstore()
+    const result = await kvStore.list({ kindName: 'testYodel', limit: 1 })
+    expect(result).toMatchInlineSnapshot(`
+      [
+        {
+          "_keyStr": "agByDwsSCXRlc3RZb2RlbBgCDKIBBHRlc3Q",
+          "foo": "bar",
+          Symbol(KEY): Key {
+            "id": "2",
+            "kind": "testYodel",
+            "namespace": "test",
+            "path": [
+              "testYodel",
+              "2",
+            ],
+          },
+        },
+      ]
+    `)
+  })
 })
 
 test('set', async () => {
